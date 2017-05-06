@@ -4,7 +4,7 @@
 //
 //  Created by Samuel Sutch on 1/30/16.
 //  Copyright (c) 2016 breadwallet LLC
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -33,18 +33,18 @@ public extension String {
         let result = NSMutableData(length: Int(128/8))!
         let resultBytes = result.mutableBytes
         MD5(resultBytes, (data as NSData).bytes, data.count)
-        
+
 //        let a = UnsafeBufferPointer<CUnsignedChar>(start: resultBytes, count: result.length)
         let a = resultBytes.assumingMemoryBound(to: CUnsignedChar.self)
         let hash = NSMutableString()
-        
+
         for i in 0..<result.length {
             hash.appendFormat("%02x", a[i])
         }
-        
+
         return hash as String
     }
-    
+
     func parseQueryString() -> [String: [String]] {
         var ret = [String: [String]]()
         var strippedString = self
@@ -65,7 +65,7 @@ public extension String {
         }
         return ret
     }
-    
+
     static func buildQueryString(_ options: [String: [String]]?, includeQ: Bool = false) -> String {
         var s = ""
         if let options = options , options.count > 0 {
@@ -93,7 +93,7 @@ public extension Data {
     var hexString: String {
         return reduce("") {$0 + String(format: "%02x", $1)}
     }
-    
+
     var bzCompressedData: Data? {
         get {
             if self.count == 0 {
@@ -191,7 +191,7 @@ public extension Date {
     static func withMsTimestamp(_ ms: UInt64) -> Date {
         return Date(timeIntervalSince1970: Double(ms) / 1000.0)
     }
-    
+
     func msTimestamp() -> UInt64 {
         return UInt64((self.timeIntervalSince1970 < 0 ? 0 : self.timeIntervalSince1970) * 1000.0)
     }
@@ -209,7 +209,7 @@ public extension Date {
             return newObject
         }
     }
-    
+
     fileprivate static func RFC1123DateFormatter() -> DateFormatter {
         return cachedThreadLocalObjectWithKey("RFC1123DateFormatter") {
             let locale = Locale(identifier: "en_US")
@@ -221,7 +221,7 @@ public extension Date {
             return dateFormatter
         }
     }
-    
+
     fileprivate static func RFC850DateFormatter() -> DateFormatter {
         return cachedThreadLocalObjectWithKey("RFC850DateFormatter") {
             let locale = Locale(identifier: "en_US")
@@ -233,7 +233,7 @@ public extension Date {
             return dateFormatter
         }
     }
-    
+
     fileprivate static func asctimeDateFormatter() -> DateFormatter {
         return cachedThreadLocalObjectWithKey("asctimeDateFormatter") {
             let locale = Locale(identifier: "en_US")
@@ -245,22 +245,22 @@ public extension Date {
             return dateFormatter
         }
     }
-    
+
     static func fromRFC1123(_ dateString: String) -> Date? {
-        
+
         var date: Date?
         // RFC1123
         date = Date.RFC1123DateFormatter().date(from: dateString)
         if date != nil {
             return date
         }
-        
+
         // RFC850
         date = Date.RFC850DateFormatter().date(from: dateString)
         if date != nil {
             return date
         }
-        
+
         // asctime-date
         date = Date.asctimeDateFormatter().date(from: dateString)
         if date != nil {
@@ -268,19 +268,19 @@ public extension Date {
         }
         return nil
     }
-    
+
     func RFC1123String() -> String? {
         return Date.RFC1123DateFormatter().string(from: self)
     }
 }
 
 extension UIImage {
-    
+
     /// Represents a scaling mode
     enum ScalingMode {
         case aspectFill
         case aspectFit
-        
+
         /// Calculates the aspect ratio between two sizes
         ///
         /// - parameters:
@@ -291,7 +291,7 @@ extension UIImage {
         func aspectRatio(between size: CGSize, and otherSize: CGSize) -> CGFloat {
             let aspectWidth  = size.width/otherSize.width
             let aspectHeight = size.height/otherSize.height
-            
+
             switch self {
             case .aspectFill:
                 return max(aspectWidth, aspectHeight)
@@ -300,7 +300,7 @@ extension UIImage {
             }
         }
     }
-    
+
     /// Scales an image to fit within a bounds with a size governed by the passed size. Also keeps the aspect ratio.
     ///
     /// - parameters:
@@ -309,25 +309,25 @@ extension UIImage {
     ///
     /// - returns: a new scaled image.
     func scaled(to newSize: CGSize, scalingMode: UIImage.ScalingMode = .aspectFill) -> UIImage {
-        
+
         let aspectRatio = scalingMode.aspectRatio(between: newSize, and: size)
-        
+
         /* Build the rectangle representing the area to be drawn */
         var scaledImageRect = CGRect.zero
-        
+
         scaledImageRect.size.width  = size.width * aspectRatio
         scaledImageRect.size.height = size.height * aspectRatio
         scaledImageRect.origin.x    = (newSize.width - size.width * aspectRatio) / 2.0
         scaledImageRect.origin.y    = (newSize.height - size.height * aspectRatio) / 2.0
-        
+
         /* Draw and retrieve the scaled image */
         UIGraphicsBeginImageContext(newSize)
-        
+
         draw(in: scaledImageRect)
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        
+
         UIGraphicsEndImageContext()
-        
+
         return scaledImage!
     }
 }

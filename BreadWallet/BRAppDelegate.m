@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 5/8/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -95,7 +95,7 @@
     //      https://github.com/cetuscetus/btctool/blob/bip/bip-xxxx.mediawiki
 
     [BRPhoneWCSessionManager sharedInstance];
-    
+
     // observe balance and create notifications
     [self setupBalanceNotification:application];
     [self setupPreferenceDefaults];
@@ -202,7 +202,7 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
 
     // sync events to the server
     [[BREventManager sharedEventManager] sync];
-    
+
     // set badge to alert user of buy bitcoin feature
 //    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"has_alerted_buy_bitcoin"] == NO &&
 //        [WKWebView class] && [[BRAPIClient sharedClient] featureEnabled:BRFeatureFlagsBuyBitcoin] &&
@@ -214,9 +214,9 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
 - (void)setupBalanceNotification:(UIApplication *)application
 {
     BRWalletManager *manager = [BRWalletManager sharedInstance];
-    
+
     self.balance = UINT64_MAX; // this gets set in applicationDidBecomActive:
-    
+
     self.balanceObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:BRWalletBalanceChangedNotification object:nil queue:nil
         usingBlock:^(NSNotification * _Nonnull note) {
@@ -224,36 +224,36 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
                 BOOL send = [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEFAULTS_LOCAL_NOTIFICATIONS_KEY];
                 NSString *noteText = [NSString stringWithFormat:NSLocalizedString(@"received %@", nil),
                                       [manager stringForAmount:manager.wallet.balance - self.balance]];
-                
+
                 NSLog(@"local notifications enabled=%d", send);
-                
+
                 // send a local notification if in the background
                 if (application.applicationState == UIApplicationStateBackground ||
                     application.applicationState == UIApplicationStateInactive) {
                     [UIApplication sharedApplication].applicationIconBadgeNumber =
                         [UIApplication sharedApplication].applicationIconBadgeNumber + 1;
-                    
+
                     if (send) {
                         UILocalNotification *note = [[UILocalNotification alloc] init];
-                        
+
                         note.alertBody = noteText;
                         note.soundName = @"coinflip";
                         [[UIApplication sharedApplication] presentLocalNotificationNow:note];
                         NSLog(@"sent local notification %@", note);
                     }
                 }
-                
+
                 // send a custom notification to the watch if the watch app is up
                 [[BRPhoneWCSessionManager sharedInstance] notifyTransactionString:noteText];
             }
-            
+
             self.balance = manager.wallet.balance;
         }];
 }
 
 - (void)setupPreferenceDefaults {
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-    
+
     // turn on local notifications by default
     if (! [defs boolForKey:USER_DEFAULTS_LOCAL_NOTIFICATIONS_SWITCH_KEY]) {
         NSLog(@"enabling local notifications by default");
@@ -265,7 +265,7 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
 - (void)updatePlatform {
     if ([WKWebView class]) { // platform features are only available on iOS 8.0+
         BRAPIClient *client = [BRAPIClient sharedClient];
-        
+
         // set up bundles
 #if DEBUG || TESTFLIGHT
         NSArray *bundles = @[@"bread-buy-staging"];
@@ -281,10 +281,10 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
                 }
             }];
         }];
-        
+
         // set up feature flags
         [client updateFeatureFlags];
-        
+
         // set up the kv store
         BRKVStoreObject *obj;
         NSError *kvErr = nil;
@@ -299,7 +299,7 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
         if (kvErr != nil) {
             NSLog(@"Error setting kv object err=%@", kvErr);
         }
-        
+
         [client.kv sync:^(NSError * _Nullable err) {
             NSLog(@"Finished syncing: error=%@", err);
         }];
@@ -310,17 +310,17 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
     BOOL hasNotification = [UIUserNotificationSettings class] != nil;
     NSString *userDefaultsKey = @"has_asked_for_push";
     BOOL hasAskedForPushNotification = [[NSUserDefaults standardUserDefaults] boolForKey:userDefaultsKey];
-    
+
     if (hasAskedForPushNotification && hasNotification && !self.pushRegistry) {
         self.pushRegistry = [[PKPushRegistry alloc] initWithQueue:dispatch_get_main_queue()];
         self.pushRegistry.delegate = self;
         self.pushRegistry.desiredPushTypes = [NSSet setWithObject:PKPushTypeVoIP];
-        
+
         UIUserNotificationType types = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge
                                         | UIUserNotificationTypeSound);
         UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings
                                                             settingsForTypes:types categories:nil];
-        
+
         [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
     }
 }
@@ -346,7 +346,7 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult))completionH
 #else
     NSString *svcType = @"p"; // ^ "production"
 #endif
-    
+
     NSLog(@"Push registry did update push credentials: %@", credentials);
     BRAPIClient *client = [BRAPIClient sharedClient];
     [client savePushNotificationToken:credentials.token pushNotificationType:svcType];

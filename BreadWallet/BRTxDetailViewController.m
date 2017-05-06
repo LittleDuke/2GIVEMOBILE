@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 7/23/14.
 //  Copyright (c) 2014 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
 }
@@ -63,7 +63,7 @@
             queue:nil usingBlock:^(NSNotification *note) {
                 BRTransaction *tx = [[BRWalletManager sharedInstance].wallet
                                      transactionForHash:self.transaction.txHash];
-                
+
                 if (tx) self.transaction = tx;
                 [self.tableView reloadData];
             }];
@@ -74,7 +74,7 @@
 {
     if (self.txStatusObserver) [[NSNotificationCenter defaultCenter] removeObserver:self.txStatusObserver];
     self.txStatusObserver = nil;
-    
+
     [super viewWillDisappear:animated];
 }
 
@@ -89,14 +89,14 @@
     NSMutableArray *text = [NSMutableArray array], *detail = [NSMutableArray array], *amount = [NSMutableArray array];
     uint64_t fee = [manager.wallet feeForTransaction:transaction];
     NSUInteger outputAmountIndex = 0;
-    
+
     _transaction = transaction;
     self.sent = [manager.wallet amountSentByTransaction:transaction];
     self.received = [manager.wallet amountReceivedFromTransaction:transaction];
 
     for (NSString *address in transaction.outputAddresses) {
         uint64_t amt = [transaction.outputAmounts[outputAmountIndex++] unsignedLongLongValue];
-    
+
         if (address == (id)[NSNull null]) {
             if (self.sent > 0) {
                 [text addObject:NSLocalizedString(@"unknown address", nil)];
@@ -123,14 +123,14 @@
         [detail addObject:NSLocalizedString(@"bitcoin network fee", nil)];
         [amount addObject:@(-fee)];
     }
-    
+
     self.outputText = text;
     self.outputDetail = detail;
     self.outputAmount = amount;
 }
 
 - (void)setBackgroundForCell:(UITableViewCell *)cell indexPath:(NSIndexPath *)path
-{    
+{
     [cell viewWithTag:100].hidden = (path.row > 0);
     [cell viewWithTag:101].hidden = (path.row + 1 < [self tableView:self.tableView numberOfRowsInSection:path.section]);
 }
@@ -164,7 +164,7 @@
     NSUInteger peerCount = [BRPeerManager sharedInstance].peerCount;
     NSUInteger relayCount = [[BRPeerManager sharedInstance] relayCountForTransaction:self.transaction.txHash];
     NSString *s;
-    
+
     // Configure the cell...
     switch (indexPath.section) {
         case 0:
@@ -182,7 +182,7 @@
                                         [s substringFromIndex:s.length/2]];
                     detailLabel.copyableText = s;
                     break;
-                    
+
                 case 1:
                     cell = [tableView dequeueReusableCellWithIdentifier:@"TitleCell" forIndexPath:indexPath];
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -192,7 +192,7 @@
                     [self setBackgroundForCell:cell indexPath:indexPath];
                     textLabel.text = NSLocalizedString(@"status:", nil);
                     subtitleLabel.text = nil;
-                    
+
                     if (self.transaction.blockHeight != TX_UNCONFIRMED) {
                         detailLabel.text = [NSString stringWithFormat:NSLocalizedString(@"confirmed in block #%d", nil),
                                             self.transaction.blockHeight, self.txDateString];
@@ -209,9 +209,9 @@
                                             relayCount, peerCount];
                     }
                     else detailLabel.text = NSLocalizedString(@"verified, waiting for confirmation", nil);
-                    
+
                     break;
-                    
+
                 case 2:
                     cell = [tableView dequeueReusableCellWithIdentifier:@"TransactionCell"];
                     [self setBackgroundForCell:cell indexPath:indexPath];
@@ -228,15 +228,15 @@
                         localCurrencyLabel.text = [NSString stringWithFormat:@"(%@)",
                                                    [manager localCurrencyStringForAmount:self.received - self.sent]];
                     }
-                    
+
                     break;
-                    
+
                 default:
                     break;
             }
-            
+
             break;
-            
+
         case 1: // drop through
         case 2:
             if ((self.sent > 0 && indexPath.section == 1) || (self.sent == 0 && indexPath.section == 2)) {
@@ -270,7 +270,7 @@
                 detailLabel.text = self.transaction.inputAddresses[indexPath.row];
                 amountLabel.text = nil;
                 localCurrencyLabel.text = nil;
-                
+
                 if ([manager.wallet containsAddress:self.transaction.inputAddresses[indexPath.row]]) {
                     subtitleLabel.text = NSLocalizedString(@"wallet address", nil);
                 }
@@ -292,7 +292,7 @@
             [self setBackgroundForCell:cell indexPath:indexPath];
             break;
     }
-    
+
     return cell;
 }
 
@@ -303,7 +303,7 @@
         case 1: return (self.sent > 0) ? NSLocalizedString(@"to:", nil) : NSLocalizedString(@"from:", nil);
         case 2: return (self.sent > 0) ? NSLocalizedString(@"from:", nil) : NSLocalizedString(@"to:", nil);
     }
-    
+
     return nil;
 }
 
@@ -316,20 +316,20 @@
         case 1: return (self.sent > 0 && [self.outputText[indexPath.row] length] == 0) ? 40 : 60.0;
         case 2: return 60.0;
     }
-    
+
     return 44.0;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     NSString *sectionTitle = [self tableView:tableView titleForHeaderInSection:section];
-    
+
     if (sectionTitle.length == 0) return 22.0;
-    
+
     CGRect textRect = [sectionTitle boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 30.0, CGFLOAT_MAX)
                 options:NSStringDrawingUsesLineFragmentOrigin
                 attributes:@{NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue-Light" size:17]} context:nil];
-    
+
     return textRect.size.height + 12.0;
 }
 
@@ -339,7 +339,7 @@
                                                          [self tableView:tableView heightForHeaderInSection:section])];
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 10.0, headerview.frame.size.width - 30.0,
                                                            headerview.frame.size.height - 12.0)];
-    
+
     titleLabel.text = [self tableView:tableView titleForHeaderInSection:section];
     titleLabel.backgroundColor = [UIColor clearColor];
     titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:17];
@@ -349,7 +349,7 @@
     titleLabel.numberOfLines = 0;
     headerview.backgroundColor = [UIColor clearColor];
     [headerview addSubview:titleLabel];
-    
+
     return headerview;
 }
 
@@ -359,7 +359,7 @@
     UITableViewCell *cell = (i < self.tableView.visibleCells.count) ? self.tableView.visibleCells[i] : nil;
     BRCopyLabel *copyLabel = (id)[cell viewWithTag:2];
     [BREventManager saveEvent:@"tx_detail:copy_label"];
-    
+
     copyLabel.selectedColor = [UIColor clearColor];
     if (cell.selectionStyle != UITableViewCellSelectionStyleNone) [copyLabel toggleCopyMenu];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

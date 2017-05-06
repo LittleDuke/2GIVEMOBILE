@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 7/19/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ static void CKDpriv(UInt256 *k, UInt256 *c, uint32_t i)
 {
     uint8_t buf[sizeof(BRECPoint) + sizeof(i)];
     UInt512 I;
-    
+
     if (i & BIP32_HARD) {
         buf[0] = 0;
         *(UInt256 *)&buf[1] = *k;
@@ -65,10 +65,10 @@ static void CKDpriv(UInt256 *k, UInt256 *c, uint32_t i)
     *(uint32_t *)&buf[sizeof(BRECPoint)] = CFSwapInt32HostToBig(i);
 
     HMAC(&I, SHA512, sizeof(UInt512), c, sizeof(*c), buf, sizeof(buf)); // I = HMAC-SHA512(c, k|P(k) || i)
-    
+
     BRSecp256k1ModAdd(k, (UInt256 *)&I); // k = IL + k (mod n)
     *c = *(UInt256 *)&I.u8[sizeof(UInt256)]; // c = IR
-    
+
     memset(buf, 0, sizeof(buf));
     memset(&I, 0, sizeof(I));
 }
@@ -93,15 +93,15 @@ static void CKDpub(BRECPoint *K, UInt256 *c, uint32_t i)
 
     uint8_t buf[sizeof(*K) + sizeof(i)];
     UInt512 I;
-    
+
     *(BRECPoint *)buf = *K;
     *(uint32_t *)&buf[sizeof(*K)] = CFSwapInt32HostToBig(i);
 
     HMAC(&I, SHA512, sizeof(UInt512), c, sizeof(*c), buf, sizeof(buf)); // I = HMAC-SHA512(c, P(K) || i)
-    
+
     *c = *(UInt256 *)&I.u8[sizeof(UInt256)]; // c = IR
     BRSecp256k1PointAdd(K, (UInt256 *)&I); // K = P(IL) + K
-    
+
     memset(buf, 0, sizeof(buf));
     memset(&I, 0, sizeof(I));
 }
@@ -143,7 +143,7 @@ static NSString *serialize(uint8_t depth, uint32_t fingerprint, uint32_t child, 
     UInt256 secret = *(UInt256 *)&I, chain = *(UInt256 *)&I.u8[sizeof(UInt256)];
 
     [mpk appendBytes:[BRKey keyWithSecret:secret compressed:YES].hash160.u32 length:4];
-    
+
     CKDpriv(&secret, &chain, 0 | BIP32_HARD); // account 0H
 
     [mpk appendBytes:&chain length:sizeof(chain)];
@@ -177,12 +177,12 @@ static NSString *serialize(uint8_t depth, uint32_t fingerprint, uint32_t child, 
 
     NSMutableArray *a = [NSMutableArray arrayWithCapacity:n.count];
     UInt512 I;
-    
+
     HMAC(&I, SHA512, sizeof(UInt512), BIP32_SEED_KEY, strlen(BIP32_SEED_KEY), seed.bytes, seed.length);
-    
+
     UInt256 secret = *(UInt256 *)&I, chain = *(UInt256 *)&I.u8[sizeof(UInt256)];
     uint8_t version = BITCOIN_PRIVKEY;
-    
+
 #if BITCOIN_TESTNET
     version = BITCOIN_PRIVKEY_TEST;
 #endif
@@ -193,7 +193,7 @@ static NSString *serialize(uint8_t depth, uint32_t fingerprint, uint32_t child, 
     for (NSNumber *i in n) {
         NSMutableData *privKey = [NSMutableData secureDataWithCapacity:34];
         UInt256 s = secret, c = chain;
-        
+
         CKDpriv(&s, &c, i.unsignedIntValue); // nth key in chain
 
         [privKey appendBytes:&version length:1];
@@ -210,22 +210,22 @@ static NSString *serialize(uint8_t depth, uint32_t fingerprint, uint32_t child, 
 - (NSString *)authPrivateKeyFromSeed:(NSData *)seed
 {
     if (! seed) return nil;
-    
+
     UInt512 I;
-    
+
     HMAC(&I, SHA512, sizeof(UInt512), BIP32_SEED_KEY, strlen(BIP32_SEED_KEY), seed.bytes, seed.length);
-    
+
     UInt256 secret = *(UInt256 *)&I, chain = *(UInt256 *)&I.u8[sizeof(UInt256)];
     uint8_t version = BITCOIN_PRIVKEY;
-    
+
 #if BITCOIN_TESTNET
     version = BITCOIN_PRIVKEY_TEST;
 #endif
-    
+
     // path m/1H/0 (same as copay uses for bitauth)
     CKDpriv(&secret, &chain, 1 | BIP32_HARD);
     CKDpriv(&secret, &chain, 0);
-    
+
     NSMutableData *privKey = [NSMutableData secureDataWithCapacity:34];
 
     [privKey appendBytes:&version length:1];
@@ -239,18 +239,18 @@ static NSString *serialize(uint8_t depth, uint32_t fingerprint, uint32_t child, 
 {
     NSUInteger len = [uri lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     NSMutableData *data = [NSMutableData dataWithCapacity:sizeof(n) + len];
-    
+
     [data appendUInt32:n];
     [data appendBytes:uri.UTF8String length:len];
 
     UInt256 hash = data.SHA256;
     UInt512 I;
-    
+
     HMAC(&I, SHA512, sizeof(UInt512), BIP32_SEED_KEY, strlen(BIP32_SEED_KEY), seed.bytes, seed.length);
-    
+
     UInt256 secret = *(UInt256 *)&I, chain = *(UInt256 *)&I.u8[sizeof(UInt256)];
     uint8_t version = BITCOIN_PRIVKEY;
-    
+
 #if BITCOIN_TESTNET
     version = BITCOIN_PRIVKEY_TEST;
 #endif
@@ -262,7 +262,7 @@ static NSString *serialize(uint8_t depth, uint32_t fingerprint, uint32_t child, 
     CKDpriv(&secret, &chain, CFSwapInt32LittleToHost(hash.u32[3]) | BIP32_HARD); // m/13H/aH/bH/cH/dH
 
     NSMutableData *privKey = [NSMutableData secureDataWithCapacity:34];
-    
+
     [privKey appendBytes:&version length:1];
     [privKey appendBytes:&secret length:sizeof(secret)];
     [privKey appendBytes:"\x01" length:1]; // specifies compressed pubkey format
@@ -287,7 +287,7 @@ static NSString *serialize(uint8_t depth, uint32_t fingerprint, uint32_t child, 
 - (NSString *)serializedMasterPublicKey:(NSData *)masterPublicKey
 {
     if (masterPublicKey.length < 36) return nil;
-    
+
     uint32_t fingerprint = CFSwapInt32BigToHost(*(const uint32_t *)masterPublicKey.bytes);
     UInt256 chain = *(UInt256 *)((const uint8_t *)masterPublicKey.bytes + 4);
     BRECPoint pubKey = *(BRECPoint *)((const uint8_t *)masterPublicKey.bytes + 36);

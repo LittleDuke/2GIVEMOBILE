@@ -4,7 +4,7 @@
 //
 //  Created by Samuel Sutch on 2/18/16.
 //  Copyright (c) 2016 breadwallet LLC
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -59,7 +59,7 @@ enum SocketOpcode: UInt8, CustomStringConvertible {
     case close = 0x8
     case ping = 0x9
     case pong = 0xA
-    
+
     var description: String {
         switch (self) {
         case .stream: return "STREAM"
@@ -96,14 +96,14 @@ class BRWebSocketServer {
     var thread: pthread_t? = nil
     var waiter: UnsafeMutablePointer<pthread_cond_t>
     var mutex: UnsafeMutablePointer<pthread_mutex_t>
-    
+
     init() {
         mutex = UnsafeMutablePointer.allocate(capacity: MemoryLayout<pthread_mutex_t>.size)
         waiter = UnsafeMutablePointer.allocate(capacity: MemoryLayout<pthread_cond_t>.size)
         pthread_mutex_init(mutex, nil)
         pthread_cond_init(waiter, nil)
     }
-    
+
     func add(_ socket: BRWebSocketImpl) {
         log("adding socket \(socket.fd)")
         pthread_mutex_lock(mutex)
@@ -113,7 +113,7 @@ class BRWebSocketServer {
         pthread_mutex_unlock(mutex)
         log("done adding socket \(socket.fd)")
     }
-    
+
     func serveForever() {
         objc_sync_enter(self)
         if thread != nil {
@@ -129,7 +129,7 @@ class BRWebSocketServer {
         }, selfPointer)
         objc_sync_exit(self)
     }
-    
+
     func _serveForever() {
         log("starting websocket poller")
         while true {
@@ -140,15 +140,15 @@ class BRWebSocketServer {
             }
             pthread_mutex_unlock(mutex)
             // log("awaiting select")
-            
+
             // all fds should be available for a read
             let readFds = sockets.map({ (ws) -> Int32 in return ws.0 });
-            
+
             // only fds which have items in the send queue are available for a write
             let writeFds = sockets.map({
                 (ws) -> Int32 in return ws.1.sendq.count > 0 ? ws.0 : -1
             }).filter({ i in return i != -1 })
-            
+
             // build the select request and execute it, checking the result for an error
             let req = bw_select_request(
                 write_fd_len: Int32(writeFds.count),
@@ -156,16 +156,16 @@ class BRWebSocketServer {
                 write_fds: UnsafeMutablePointer(mutating: writeFds),
                 read_fds: UnsafeMutablePointer(mutating: readFds)
             );
-            
+
             let resp = bw_select(req)
-            
+
             if resp.error > 0 {
                 let errstr = strerror(resp.error)
                 log("error doing a select \(String(describing: errstr)) - removing all clients")
                 sockets.removeAll()
                 continue
             }
-            
+
             // read for all readers that have data waiting
             for i in 0..<resp.read_fd_len {
                 log("handle read fd \(sockets[resp.read_fds[Int(i)]]!.fd)")
@@ -179,7 +179,7 @@ class BRWebSocketServer {
                     }
                 }
             }
-            
+
             // write for all writers
             for i in 0..<resp.write_fd_len {
                 log("handle write fd=\(sockets[resp.write_fds[Int(i)]]!.fd)")
@@ -208,7 +208,7 @@ class BRWebSocketServer {
                     }
                 }
             }
-            
+
             // kill sockets that wrote out of bound data
             for i in 0..<resp.error_fd_len {
                 if let errSock = sockets[resp.error_fds[Int(i)]] {
@@ -219,7 +219,7 @@ class BRWebSocketServer {
             }
         }
     }
-    
+
     // attempt to send a buffer, returning the number of sent bytes
     func sendBuffer(_ fd: Int32, buffer: [UInt8]) throws -> Int {
         log("send buffer fd=\(fd) buffer=\(buffer)")
@@ -243,7 +243,7 @@ class BRWebSocketServer {
         }
         return sent
     }
-    
+
     func log(_ s: String) {
         print("[BRWebSocketHost] \(s)")
     }
@@ -258,7 +258,7 @@ class BRWebSocketImpl: BRWebSocket {
     var key: String!
     var version: String!
     @objc var id: String = UUID().uuidString
-    
+
     var state = SocketState.headerb1
     var fin: UInt8 = 0
     var hasMask = false
@@ -272,13 +272,13 @@ class BRWebSocketImpl: BRWebSocket {
     var dataWritten = 0
     var maskarray = [UInt8]()
     var maskarrayWritten = 0
-    
+
     var fragStart = false
     var fragType = SocketOpcode.binary
     var fragBuffer = [UInt8]()
-    
+
     var sendq = [(SocketOpcode, [UInt8])]()
-    
+
     init(request: BRHTTPRequest, response: BRHTTPResponse, match: BRHTTPRouteMatch, client: BRWebSocketClient) {
         self.request = request
         self.match = match
@@ -286,15 +286,15 @@ class BRWebSocketImpl: BRWebSocket {
         self.response = response
         self.client = client
     }
-    
+
     // MARK: - public interface impl
-    
+
     @objc func send(_ text: String) {
         sendMessage(false, opcode: .text, data: [UInt8](text.utf8))
     }
-    
+
     // MARK: - private interface
-    
+
     func handshake() -> Bool {
         log("handshake initiated")
         if let upgrades = request.headers["upgrade"] , upgrades.count > 0 {
@@ -321,7 +321,7 @@ class BRWebSocketImpl: BRWebSocket {
                     if !setNonBlocking() {
                         return false
                     }
-                    
+
                     return true
                 }
                 log("invalid handshake - missing sec-websocket-key or sec-websocket-version")
@@ -330,7 +330,7 @@ class BRWebSocketImpl: BRWebSocket {
         log("invalid handshake - missing or malformed \"upgrade\" header")
         return false
     }
-    
+
     func setNonBlocking() -> Bool {
         log("setting socket to non blocking")
         let nbResult = bw_nbioify(request.fd)
@@ -340,7 +340,7 @@ class BRWebSocketImpl: BRWebSocket {
         }
         return true
     }
-    
+
     func handleRead() throws {
         var buf = [UInt8](repeating: 0, count: 1)
         let n = recv(fd, &buf, 1, 0)
@@ -350,7 +350,7 @@ class BRWebSocketImpl: BRWebSocket {
         }
         parseMessage(buf[0])
     }
-    
+
     func parseMessage(_ byte: UInt8) {
         if state == .headerb1 {
             fin = byte & UInt8(0x80)
@@ -517,7 +517,7 @@ class BRWebSocketImpl: BRWebSocket {
             }
         }
     }
-    
+
     func handlePacket() {
         log("handle packet state=\(state) opcode=\(opcode)")
         // validate opcode
@@ -532,7 +532,7 @@ class BRWebSocketImpl: BRWebSocket {
             log("unknown opcode")
             return
         }
-        
+
         if opcode == .close {
             log("CLOSE")
             var status = SocketCloseEventCode.close_NORMAL
@@ -617,7 +617,7 @@ class BRWebSocketImpl: BRWebSocket {
             }
         }
     }
-    
+
     func close(_ status: SocketCloseEventCode = .close_NORMAL, reason: String = "") {
         if !closed {
             log("sending close")
@@ -627,7 +627,7 @@ class BRWebSocketImpl: BRWebSocket {
         }
         closed = true
     }
-    
+
     func sendMessage(_ fin: Bool, opcode: SocketOpcode, data: [UInt8]) {
         log("send message opcode=\(opcode)")
         var b1: UInt8 = 0
@@ -651,7 +651,7 @@ class BRWebSocketImpl: BRWebSocket {
         payload.append(contentsOf: data)
         sendq.append((opcode, payload))
     }
-    
+
     func log(_ s: String) {
         print("[BRWebSocket \(fd)] \(s)")
     }

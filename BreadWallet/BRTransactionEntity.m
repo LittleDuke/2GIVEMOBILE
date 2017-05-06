@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 8/22/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -57,19 +57,19 @@
         NSMutableOrderedSet *outputs = [self mutableOrderedSetValueForKey:@"outputs"];
         UInt256 txHash = tx.txHash;
         NSUInteger idx = 0;
-        
+
         self.txHash = [NSData dataWithBytes:&txHash length:sizeof(txHash)];
         self.blockHeight = tx.blockHeight;
         self.timestamp = tx.timestamp;
-    
+
         while (inputs.count < tx.inputHashes.count) {
             [inputs addObject:[BRTxInputEntity managedObject]];
         }
-    
+
         while (inputs.count > tx.inputHashes.count) {
             [inputs removeObjectAtIndex:inputs.count - 1];
         }
-    
+
         for (BRTxInputEntity *e in inputs) {
             [e setAttributesFromTx:tx inputIndex:idx++];
         }
@@ -77,47 +77,47 @@
         while (outputs.count < tx.outputAddresses.count) {
             [outputs addObject:[BRTxOutputEntity managedObject]];
         }
-    
+
         while (outputs.count > tx.outputAddresses.count) {
             [self removeObjectFromOutputsAtIndex:outputs.count - 1];
         }
 
         idx = 0;
-        
+
         for (BRTxOutputEntity *e in outputs) {
             [e setAttributesFromTx:tx outputIndex:idx++];
         }
-        
+
         self.lockTime = tx.lockTime;
     }];
-    
+
     return self;
 }
 
 - (BRTransaction *)transaction
 {
     BRTransaction *tx = [BRTransaction new];
-    
+
     [self.managedObjectContext performBlockAndWait:^{
         NSData *txHash = self.txHash;
-        
+
         if (txHash.length == sizeof(UInt256)) tx.txHash = *(const UInt256 *)txHash.bytes;
         tx.lockTime = self.lockTime;
         tx.blockHeight = self.blockHeight;
         tx.timestamp = self.timestamp;
-    
+
         for (BRTxInputEntity *e in self.inputs) {
             txHash = e.txHash;
             if (txHash.length != sizeof(UInt256)) continue;
             [tx addInputHash:*(const UInt256 *)txHash.bytes index:e.n script:nil signature:e.signature
              sequence:e.sequence];
         }
-        
+
         for (BRTxOutputEntity *e in self.outputs) {
             [tx addOutputScript:e.script amount:e.value];
         }
     }];
-    
+
     return tx;
 }
 

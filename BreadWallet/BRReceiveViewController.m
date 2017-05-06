@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 5/8/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     self.receiveButton.layer.cornerRadius = 2;
     self.receiveButton.layer.borderWidth = 2;
     self.receiveButton.layer.borderColor = (__bridge CGColorRef _Nullable)([UIColor colorWithRed:40.0 green:40.0 blue:40.0 alpha:0.90]);
@@ -83,12 +83,12 @@
             _qrImage = [[UIImage imageWithContentsOfFile:QR_IMAGE_FILE] resize:self.qrView.bounds.size
                         withInterpolationQuality:kCGInterpolationNone];;
         }
-        
+
         self.qrView.image = _qrImage;
         [self.addressButton setTitle:req.paymentAddress forState:UIControlStateNormal];
     }
     else [self.addressButton setTitle:nil forState:UIControlStateNormal];
-    
+
     if (req.amount > 0) {
         self.label.text = [NSString stringWithFormat:@"%@", [manager stringForAmount:req.amount]];
     }
@@ -100,7 +100,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [self hideTips];
-    
+
     [super viewWillDisappear:animated];
 }
 
@@ -116,10 +116,10 @@
         BRWalletManager *manager = [BRWalletManager sharedInstance];
         BRPaymentRequest *req = self.paymentRequest;
         UIImage *image = [UIImage imageWithQRCodeData:req.data color:[CIColor colorWithRed:0.0 green:0.0 blue:0.0]];
-        
+
         self.qrImage = [image resize:(self.qrView ? self.qrView.bounds.size : CGSizeMake(250.0, 250.0))
                         withInterpolationQuality:kCGInterpolationNone];
-        
+
         if (req.amount == 0) {
             if (req.isValid) {
                 [self.groupDefs setObject:req.data forKey:APP_GROUP_REQUEST_DATA_KEY];
@@ -138,10 +138,10 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             self.qrView.image = self.qrImage;
             [self.addressButton setTitle:self.paymentAddress forState:UIControlStateNormal];
-            
+
             if (req.amount > 0) {
                 self.label.text = [NSString stringWithFormat:@"%@", [manager stringForAmount:req.amount]];
-                
+
                 if (! self.balanceObserver) {
                     self.balanceObserver =
                         [[NSNotificationCenter defaultCenter] addObserverForName:BRWalletBalanceChangedNotification
@@ -149,7 +149,7 @@
                             [self checkRequestStatus];
                         }];
                 }
-                
+
                 if (! self.txStatusObserver) {
                     self.txStatusObserver =
                         [[NSNotificationCenter defaultCenter] addObserverForName:BRPeerManagerTxStatusNotification
@@ -167,7 +167,7 @@
     BRWalletManager *manager = [BRWalletManager sharedInstance];
     BRPaymentRequest *req = self.paymentRequest;
     uint64_t total = 0, fuzz = [manager amountForLocalCurrencyString:[manager localCurrencyStringForAmount:1]]*2;
-    
+
     if (! [manager.wallet addressIsUsed:self.paymentAddress]) return;
 
     for (BRTransaction *tx in manager.wallet.allTransactions) {
@@ -175,7 +175,7 @@
         if (tx.blockHeight == TX_UNCONFIRMED &&
             [[BRPeerManager sharedInstance] relayCountForTransaction:tx.txHash] < PEER_MAX_CONNECTIONS) continue;
         total += [manager.wallet amountReceivedFromTransaction:tx];
-                 
+
         if (total + fuzz >= req.amount) {
             UIView *view = self.navigationController.presentingViewController.view;
 
@@ -285,7 +285,7 @@
     if (! req) [actionSheet addButtonWithTitle:NSLocalizedString(@"request an amount", nil)];
     [actionSheet addButtonWithTitle:NSLocalizedString(@"cancel", nil)];
     actionSheet.cancelButtonIndex = actionSheet.numberOfButtons - 1;
-    
+
     [actionSheet showInView:[UIApplication sharedApplication].keyWindow];
 }
 
@@ -297,7 +297,7 @@
 
     //TODO: allow user to create a payment protocol request object, and use merge avoidance techniques:
     // https://medium.com/@octskyward/merge-avoidance-7f95a386692f
-    
+
     if ([title isEqual:NSLocalizedString(@"copy address to clipboard", nil)] ||
         [title isEqual:NSLocalizedString(@"copy request to clipboard", nil)]) {
         [UIPasteboard generalPasteboard].string = (self.paymentRequest.amount > 0) ? self.paymentRequest.string :
@@ -313,10 +313,10 @@
              [title isEqual:NSLocalizedString(@"send request as email", nil)]) {
         //TODO: implement BIP71 payment protocol mime attachement
         // https://github.com/bitcoin/bips/blob/master/bip-0071.mediawiki
-        
+
         if ([MFMailComposeViewController canSendMail]) {
             MFMailComposeViewController *composeController = [MFMailComposeViewController new];
-            
+
             composeController.subject = NSLocalizedString(@"Bitcoin address", nil);
             [composeController setMessageBody:self.paymentRequest.string isHTML:NO];
             [composeController addAttachmentData:UIImagePNGRepresentation(self.qrView.image) mimeType:@"image/png"
@@ -341,14 +341,14 @@
             if ([MFMessageComposeViewController canSendSubject]) {
                 composeController.subject = NSLocalizedString(@"Bitcoin address", nil);
             }
-            
+
             composeController.body = self.paymentRequest.string;
-            
+
             if ([MFMessageComposeViewController canSendAttachments]) {
                 [composeController addAttachmentData:UIImagePNGRepresentation(self.qrView.image)
                  typeIdentifier:(NSString *)kUTTypePNG filename:@"qr.png"];
             }
-            
+
             composeController.messageComposeDelegate = self;
             [self.navigationController presentViewController:composeController animated:YES completion:nil];
             composeController.view.backgroundColor = [UIColor colorWithPatternImage:
@@ -364,7 +364,7 @@
     else if ([title isEqual:NSLocalizedString(@"request an amount", nil)]) {
         UINavigationController *amountNavController = [self.storyboard
                                                        instantiateViewControllerWithIdentifier:@"AmountNav"];
-        
+
         ((BRAmountViewController *)amountNavController.topViewController).delegate = self;
         [self.navigationController presentViewController:amountNavController animated:YES completion:nil];
         [BREventManager saveEvent:@"receive:request_amount"];
@@ -392,7 +392,7 @@ error:(NSError *)error
 - (void)amountViewController:(BRAmountViewController *)amountViewController selectedAmount:(uint64_t)amount
 {
     BRWalletManager *manager = [BRWalletManager sharedInstance];
-    
+
     if (amount < manager.wallet.minOutputAmount) {
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"amount too small", nil)
           message:[NSString stringWithFormat:NSLocalizedString(@"bitcoin payments can't be less than %@", nil),
@@ -406,7 +406,7 @@ error:(NSError *)error
     UINavigationController *navController = (UINavigationController *)self.navigationController.presentedViewController;
     BRReceiveViewController *receiveController = [self.storyboard
                                                   instantiateViewControllerWithIdentifier:@"RequestViewController"];
-    
+
     receiveController.paymentRequest = self.paymentRequest;
     receiveController.paymentRequest.amount = amount;
     receiveController.view.backgroundColor = self.parentViewController.parentViewController.view.backgroundColor;
@@ -431,7 +431,7 @@ error:(NSError *)error
                      *from = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
 
     [containerView addSubview:to.view];
-    
+
     [UIView transitionFromView:from.view toView:to.view duration:[self transitionDuration:transitionContext]
     options:UIViewAnimationOptionTransitionFlipFromLeft completion:^(BOOL finished) {
         [from.view removeFromSuperview];

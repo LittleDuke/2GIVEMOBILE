@@ -4,7 +4,7 @@
 //
 //  Created by Sergey Shvedov on 14.06.16.
 //  Copyright (c) 2016 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -59,12 +59,12 @@ static void *kTitleViewStateObservingContext = &kTitleViewStateObservingContext;
 		} else {
 			[self updateLabel];
 		}
-		
+
 	} else if ( context == kTitleViewStateObservingContext ) {
-		
+
 		id oldValue = [change objectForKey:@"old"];
 		id newValue = [change objectForKey:@"new"];
-		
+
 		if ( [NSNull null] != oldValue && [NSNull null] == newValue ) {
 			self.title = self.title;
 		}
@@ -75,12 +75,12 @@ static void *kTitleViewStateObservingContext = &kTitleViewStateObservingContext;
 }
 
 - (void)updateLabel {
-	
+
 	if ( NO == [self.titleView isKindOfClass:[UILabel class]] ) {
 		UILabel *newLabel = [[UILabel alloc] init];
 		self.titleView = newLabel;
 	}
-	
+
 	if ( YES == [self.titleView isKindOfClass:[UILabel class]] ) {
 		UILabel *label = (UILabel *)self.titleView;
 		UIFont *titleFont = [UIFont fontWithName:@"HelveticaNeue-Medium" size:23.0];
@@ -88,7 +88,7 @@ static void *kTitleViewStateObservingContext = &kTitleViewStateObservingContext;
 		NSString *simpleString = self.title;
 		NSRange range = [simpleString rangeOfString:@"  LTC"];
 		range.length = (simpleString.length - range.location);
-		
+
 		NSMutableAttributedString *stylizedString = [[NSMutableAttributedString alloc] initWithString:simpleString];
 		NSNumber *offsetAmount = @(titleFont.capHeight - smallFont.capHeight);
 		[stylizedString addAttribute:NSFontAttributeName value:smallFont range:range];

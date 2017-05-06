@@ -4,7 +4,7 @@
 //
 //  Created by Samuel Sutch on 11/4/15.
 //  Copyright (c) 2016 breadwallet LLC
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2016 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ let BRAPIClientErrorDomain = "BRApiClientErrorDomain"
 @objc public enum BRFeatureFlags: Int, CustomStringConvertible {
     case buyBitcoin
     case earlyAccess
-    
+
     public var description: String {
         switch self {
         case .buyBitcoin: return "buy-bitcoin";
@@ -61,7 +61,7 @@ extension String {
         cset.removeCharacters(in: "?=&")
         return cset as CharacterSet
     }
-    
+
     var urlEscapedString: String {
         return self.addingPercentEncoding(
             withAllowedCharacters: String.urlQuoteCharacterSet)!
@@ -150,27 +150,27 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
 @objc open class BRAPIClient: NSObject, URLSessionDelegate, URLSessionTaskDelegate, BRAPIAdaptor {
     // BRAPIClient is intended to be used as a singleton so this is the instance you should use
     static let sharedClient = BRAPIClient()
-    
+
     // whether or not to emit log messages from this instance of the client
     var logEnabled = true
-    
+
     // proto is the transport protocol to use for talking to the API (either http or https)
     var proto = "https"
-    
+
     // host is the server(s) on which the API is hosted
     var host = "api.breadwallet.com"
-    
+
     // isFetchingAuth is set to true when a request is currently trying to renew authentication (the token)
     // it is useful because fetching auth is not idempotent and not reentrant, so at most one auth attempt
     // can take place at any one time
     fileprivate var isFetchingAuth = false
-    
+
     // used when requests are waiting for authentication to be fetched
     fileprivate var authFetchGroup: DispatchGroup = DispatchGroup()
-    
+
     // storage for the session constructor below
     fileprivate var _session: Foundation.URLSession? = nil
-    
+
     // the NSURLSession on which all NSURLSessionTasks are executed
     fileprivate var session: Foundation.URLSession {
         if _session == nil {
@@ -179,15 +179,15 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         }
         return _session!
     }
-    
+
     // the queue on which the NSURLSession operates
     fileprivate var queue = OperationQueue()
-    
+
     // convenience getter for the API endpoint
     var baseUrl: String {
         return "\(proto)://\(host)"
     }
-    
+
     // prints whatever you give it if logEnabled is true
     func log(_ s: String) {
         if !logEnabled {
@@ -195,19 +195,19 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         }
         print("[BRAPIClient] \(s)")
     }
-    
+
     var deviceId: String {
         return getDeviceId()
     }
-    
+
     // MARK: Networking functions
-    
+
     // Constructs a full NSURL for a given path and url parameters
     func url(_ path: String, args: Dictionary<String, String>? =  nil) -> URL {
         func joinPath(_ k: String...) -> URL {
             return URL(string: ([baseUrl] + k).joined(separator: ""))!
         }
-        
+
         if let args = args {
             return joinPath(path + "?" + args.map({
                 "\($0.0.urlEscapedString)=\($0.1.urlEscapedString)"
@@ -216,7 +216,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
             return joinPath(path)
         }
     }
-    
+
     func signRequest(_ request: URLRequest) -> URLRequest {
         var mutableRequest = request
         let dateHeader = getHeaderValue("date", d: mutableRequest.allHTTPHeaderFields)
@@ -235,7 +235,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         }
         return mutableRequest as URLRequest
     }
-    
+
     func decorateRequest(_ request: URLRequest) -> URLRequest {
         var actualRequest = request
         let testnet = BRWalletManager.sharedInstance()?.isTestnet
@@ -244,12 +244,12 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         #else
             let testflight = false
         #endif
-        
+
         actualRequest.setValue("\((testnet ?? false) ? 1 : 0)", forHTTPHeaderField: "X-Bitcoin-Testnet")
         actualRequest.setValue("\(testflight ? 1 : 0)", forHTTPHeaderField: "X-Testflight")
         return actualRequest
     }
-    
+
     open func dataTaskWithRequest(_ request: URLRequest, authenticated: Bool = false,
                              retryCount: Int = 0, handler: @escaping URLSessionTaskHandler) -> URLSessionDataTask {
         let start = Date()
@@ -273,9 +273,9 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                             errStr = s as String
                         }
                     }
-                    
+
                     self.log("\(logLine) -> status=\(httpResp.statusCode) duration=\(dur)ms errStr=\(errStr)")
-                    
+
                     if authenticated && isBreadChallenge(httpResp) {
                         self.log("\(logLine) got authentication challenge from API - will attempt to get token")
                         self.getToken { err in
@@ -308,9 +308,9 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                     handler(data, nil, err as NSError?)
                 }
             }
-        }) 
+        })
     }
-    
+
     // retrieve a token and save it in the keychain data for this account
     func getToken(_ handler: @escaping (NSError?) -> Void) {
         if isFetchingAuth {
@@ -381,7 +381,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
             }
         }) .resume()
     }
-    
+
     // MARK: URLSession Delegate
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
@@ -396,7 +396,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
             }
         }
     }
-    
+
      // disable following redirect
     public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
         var actualRequest = request
@@ -418,9 +418,9 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         }
         completionHandler(nil)
     }
-    
+
     // MARK: API Functions
-    
+
     // Fetches the /v1/fee-per-kb endpoint
     open func feePerKb(_ handler: @escaping (_ feePerKb: uint_fast64_t, _ error: String?) -> Void) {
         let req = URLRequest(url: url("/fee-per-kb"))
@@ -448,9 +448,9 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         }
         task.resume()
     }
-    
+
     // MARK: push notifications
-    
+
     open func savePushNotificationToken(_ token: Data, pushNotificationType: String = "d") {
         var req = URLRequest(url: url("/me/push-devices"))
         req.httpMethod = "POST"
@@ -474,13 +474,13 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
             self.log("token resp: \(String(describing: resp)) data: \(String(describing: dat2))")
         }.resume()
     }
-    
+
     // MARK: feature flags API
-    
+
     open func defaultsKeyForFeatureFlag(_ name: String) -> String {
         return "ff:\(name)"
     }
-    
+
     open func updateFeatureFlags() {
         var authenticated = false
         var furl = "/anybody/features"
@@ -515,7 +515,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
             }
         }.resume()
     }
-    
+
     open func featureEnabled(_ flag: BRFeatureFlags) -> Bool {
         #if Testflight || Debug
             return true
@@ -524,16 +524,16 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
             return defaults.bool(forKey: defaultsKeyForFeatureFlag(flag.description))
         #endif
     }
-    
+
     // MARK: key value access
-    
+
     fileprivate class KVStoreAdaptor: BRRemoteKVStoreAdaptor {
         let client: BRAPIClient
-        
+
         init(client: BRAPIClient) {
             self.client = client
         }
-        
+
         func ver(key: String, completionFunc: @escaping (UInt64, Date, BRRemoteKVStoreError?) -> ()) {
             var req = URLRequest(url: client.url("/kv/1/\(key)"))
             req.httpMethod = "HEAD"
@@ -548,7 +548,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                 completionFunc(v, d, self._extractErr(resp))
             }.resume()
         }
-        
+
         func put(_ key: String, value: [UInt8], version: UInt64,
                  completionFunc: @escaping (UInt64, Date, BRRemoteKVStoreError?) -> ()) {
             var req = URLRequest(url: client.url("/kv/1/\(key)"))
@@ -569,7 +569,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                 completionFunc(v, d, self._extractErr(resp))
             }.resume()
         }
-        
+
         func del(_ key: String, version: UInt64,
                  completionFunc: @escaping (UInt64, Date, BRRemoteKVStoreError?) -> ()) {
             var req = URLRequest(url: client.url("/kv/1/\(key)"))
@@ -586,7 +586,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                 completionFunc(v, d, self._extractErr(resp))
             }.resume()
         }
-        
+
         func get(_ key: String, version: UInt64,
                  completionFunc: @escaping (UInt64, Date, [UInt8], BRRemoteKVStoreError?) -> ()) {
             var req = URLRequest(url: client.url("/kv/1/\(key)"))
@@ -606,7 +606,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                 completionFunc(v, d, Array(dp), self._extractErr(resp))
             }.resume()
         }
-        
+
         func keys(_ completionFunc:
                   @escaping ([(String, UInt64, Date, BRRemoteKVStoreError?)], BRRemoteKVStoreError?) -> ()) {
             var req = URLRequest(url: client.url("/kv/_all_keys"))
@@ -619,7 +619,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                 guard let resp = resp, let dat = dat , resp.statusCode == 200 else {
                     return completionFunc([], .unknown)
                 }
-                
+
                 // data is encoded as:
                 // LE32(num) + (num * (LEU8(keyLeng) + (keyLen * LEU32(char)) + LEU64(ver) + LEU64(msTs) + LEU8(del)))
                 var i = UInt(MemoryLayout<UInt32>.size)
@@ -647,21 +647,21 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                 completionFunc(items, nil)
             }.resume()
         }
-        
+
         func _extractDate(_ r: HTTPURLResponse) -> Date? {
             if let remDate = r.allHeaderFields["Last-Modified"] as? String, let dateDate = Date.fromRFC1123(remDate) {
                 return dateDate
             }
             return nil
         }
-        
+
         func _extractVersion(_ r: HTTPURLResponse) -> UInt64? {
             if let remVer = r.allHeaderFields["Etag"] as? String, let verInt = UInt64(remVer) {
                 return verInt
             }
             return nil
         }
-        
+
         func _extractErr(_ r: HTTPURLResponse) -> BRRemoteKVStoreError? {
             switch r.statusCode {
             case 404:
@@ -677,9 +677,9 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
             }
         }
     }
-    
+
     fileprivate var _kvStore: BRReplicatedKVStore? = nil
-    
+
     open var kv: BRReplicatedKVStore? {
         get {
             if let k = _kvStore {
@@ -692,9 +692,9 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
             return nil
         }
     }
-    
+
     // MARK: Assets API
-    
+
     open class func bundleURL(_ bundleName: String) -> URL {
         let fm = FileManager.default
         let docsUrl = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -702,7 +702,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         let bundleUrl = bundleDirUrl.appendingPathComponent("\(bundleName)-extracted", isDirectory: true)
         return bundleUrl
     }
-    
+
     open func updateBundle(_ bundleName: String, handler: @escaping (_ error: String?) -> Void) {
         // 1. check if we already have a bundle given the name
         // 2. if we already have it:
@@ -712,7 +712,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         //    2d. apply the diff and extract to the bundle folder
         // 3. otherwise:
         //    3a. download and extract the bundle
-        
+
         // set up the environment
         let fm = FileManager.default
         let docsUrl = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -723,7 +723,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         let bundleExtractedUrl = bundleDirUrl.appendingPathComponent("\(bundleName)-extracted")
         let bundleExtractedPath = bundleExtractedUrl.path
         print("[BRAPIClient] bundleUrl \(bundlePath)")
-        
+
         // determines if the bundle exists, but also creates the bundles/extracted directory if it doesn't exist
         func exists() throws -> Bool {
             var attrs = try? fm.attributesOfItem(atPath: bundleDirPath)
@@ -738,15 +738,15 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
             }
             return fm.fileExists(atPath: bundlePath)
         }
-        
+
         // extracts the bundle
         func extract() throws {
             try BRTar.createFilesAndDirectoriesAtPath(bundleExtractedPath, withTarPath: bundlePath)
         }
-        
+
         guard var bundleExists = try? exists() else {
             return handler(NSLocalizedString("error determining if bundle exists", comment: "")) }
-        
+
         // attempt to use the tar file that was bundled with the binary
         if !bundleExists {
             if let bundledBundleUrl = Bundle.main.url(forResource: bundleName, withExtension: "tar") {
@@ -759,16 +759,16 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                 }
             }
         }
-        
+
         if bundleExists {
             // bundle exists, download and apply the diff, then remove diff file
             log("bundle \(bundleName) exists, fetching diff for most recent version")
-            
+
             guard let curBundleContents = try? Data(contentsOf: URL(fileURLWithPath: bundlePath)) else {
                 return handler(NSLocalizedString("error reading current bundle", comment: "")) }
-            
+
             let curBundleSha = (NSData(uInt256: (curBundleContents as NSData).sha256()) as Data).hexString
-            
+
             dataTaskWithRequest(URLRequest(url: url("/assets/bundles/\(bundleName)/versions")))
                 { (data, resp, err) -> Void in
                     if let data = data,
@@ -809,7 +809,7 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
                                             try extract()
                                             return handler(nil)
                                         } catch let e {
-                                            // something failed, clean up whatever we can, next attempt 
+                                            // something failed, clean up whatever we can, next attempt
                                             // will download fresh
                                             _ = try? fm.removeItem(atPath: diffPath)
                                             _ = try? fm.removeItem(atPath: oldBundlePath)
@@ -846,4 +846,3 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
         }
     }
 }
-

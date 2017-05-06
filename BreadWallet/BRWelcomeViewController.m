@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 7/8/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -51,22 +51,22 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-        
+
     self.navigationController.delegate = self;
 
     self.newwalletButton.titleLabel.adjustsFontSizeToFitWidth = YES;
     self.recoverButton.titleLabel.adjustsFontSizeToFitWidth = YES;
-    
+
     self.newwalletButton.layer.cornerRadius = 2;
     self.newwalletButton.layer.borderWidth = 2;
     self.newwalletButton.layer.borderColor = [UIColor whiteColor].CGColor;
     self.newwalletButton.clipsToBounds = YES;
-    
+
     self.recoverButton.layer.cornerRadius = 2;
     self.recoverButton.layer.borderWidth = 2;
     self.recoverButton.layer.borderColor = [UIColor whiteColor].CGColor;
     self.recoverButton.clipsToBounds = YES;
-    
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.newwalletButton.titleLabel.adjustsLetterSpacingToFitWidth = YES;
@@ -77,7 +77,7 @@
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:nil
         queue:nil usingBlock:^(NSNotification *note) {
         }];
-    
+
     self.backgroundObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil
         queue:nil usingBlock:^(NSNotification *note) {
@@ -98,7 +98,7 @@
     [super viewWillAppear:animated];
 
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:animated];
-    
+
     if (self.hasAppeared) {
         self.logoXCenter.constant = self.view.frame.size.width;
         self.navigationItem.titleView.hidden = NO;
@@ -128,7 +128,7 @@
         if (! [BRWalletManager sharedInstance].noWallet) { // sanity check
             [self.navigationController.presentingViewController dismissViewControllerAnimated:NO completion:nil];
         }
-        
+
         if (! self.hasAppeared) {
             self.hasAppeared = YES;
             self.paralaxXLeft = [NSLayoutConstraint constraintWithItem:self.navigationController.view
@@ -189,13 +189,13 @@
 - (IBAction)start:(id)sender
 {
     [BREventManager saveEvent:@"welcome:new_wallet"];
-    
+
     UIViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"GenerateViewController"];
-    
+
     self.generateButton = (id)[c.view viewWithTag:1];
     [self.generateButton addTarget:self action:@selector(generate:) forControlEvents:UIControlEventTouchUpInside];
     self.generateButton.titleLabel.adjustsFontSizeToFitWidth = YES;
-    
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.generateButton.titleLabel.adjustsLetterSpacingToFitWidth = YES;
@@ -206,18 +206,18 @@
     [self.showButton addTarget:self action:@selector(show:) forControlEvents:UIControlEventTouchUpInside];
     self.startLabel = (id)[c.view viewWithTag:4];
     self.recoverLabel = (id)[c.view viewWithTag:5];
-    
+
     NSTextAttachment *noEye = [NSTextAttachment new], *noKey = [NSTextAttachment new];
     NSMutableAttributedString *s = [[NSMutableAttributedString alloc]
                                     initWithAttributedString:self.warningLabel.attributedText];
-    
+
     noEye.image = [UIImage imageNamed:@"no-eye"];
     [s replaceCharactersInRange:[s.string rangeOfString:@"%no-eye%"]
      withAttributedString:[NSAttributedString attributedStringWithAttachment:noEye]];
     noKey.image = [UIImage imageNamed:@"no-key"];
     [s replaceCharactersInRange:[s.string rangeOfString:@"%no-key%"]
      withAttributedString:[NSAttributedString attributedStringWithAttachment:noKey]];
-    
+
     [s replaceCharactersInRange:[s.string rangeOfString:@"WARNING"] withString:NSLocalizedString(@"WARNING", nil)];
     [s replaceCharactersInRange:[s.string rangeOfString:@"\nDO NOT let anyone see your recovery\n"
                                  "phrase or they can spend your bitcoins.\n"]
@@ -229,7 +229,7 @@
                                   "Other devices may be infected.\n", nil)];
     self.warningLabel.attributedText = s;
     self.generateButton.superview.backgroundColor = [UIColor clearColor];
-    
+
     [self.navigationController pushViewController:c animated:YES];
 }
 
@@ -245,7 +245,7 @@
 - (IBAction)generate:(id)sender
 {
     [BREventManager saveEvent:@"welcome:generate"];
-    
+
     if (! [BRWalletManager sharedInstance].passcodeEnabled) {
         [BREventManager saveEvent:@"welcome:passcode_disabled"];
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"turn device passcode on", nil)
@@ -260,7 +260,7 @@
     self.seedNav = [self.storyboard instantiateViewControllerWithIdentifier:@"SeedNav"];
     self.warningLabel.hidden = self.showButton.hidden = NO;
     self.warningLabel.alpha = self.showButton.alpha = 0.0;
-        
+
     [UIView animateWithDuration:0.5 animations:^{
         self.warningLabel.alpha = self.showButton.alpha = 1.0;
         self.navigationController.navigationBar.topItem.titleView.alpha = 0.33*0.5;
@@ -272,7 +272,7 @@
 - (IBAction)show:(id)sender
 {
     [BREventManager saveEvent:@"welcome:show"];
-    
+
     [self.navigationController presentViewController:self.seedNav animated:YES completion:^{
         self.warningLabel.hidden = self.showButton.hidden = YES;
         self.navigationController.navigationBar.topItem.titleView.alpha = 1.0;
@@ -305,7 +305,7 @@
     [v layoutIfNeeded];
 
 //    self.paralaxXLeft.constant = self.view.frame.size.width*(to == self ? 1 : 2)*PARALAX_RATIO;
-    
+
     [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0 usingSpringWithDamping:0.8
     initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         to.view.center = from.view.center;

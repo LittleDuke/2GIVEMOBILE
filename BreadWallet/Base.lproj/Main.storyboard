@@ -2201,7 +2201,7 @@
                                             <constraint firstAttribute="height" constant="142" id="CsP-yt-96Z"/>
                                         </constraints>
                                         <string key="text">LoafWallet v%ver%%net%
-© 2016 Litecoin Association
+© 2017 Litecoin Foundation
 
 Based on BreadWallet
 © BreadWallet LLC</string>

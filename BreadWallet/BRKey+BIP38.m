@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 4/9/14.
 //  Copyright (c) 2014 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -76,18 +76,18 @@ static void AES256ECBEncrypt(const void *key, void *buf)
 {
     size_t i, j;
     uint8_t *x = buf, k[32], r = 1, a, b, c, d, e;
-    
+
     memcpy(k, key, sizeof(k));
 
     for (i = 0; i < 14; i++) {
         for (j = 0; j < 4; j++) ((uint32_t *)x)[j] ^= ((uint32_t *)k)[j + (i & 1)*4]; // add round key
 
         for (j = 0; j < 16; j++) x[j] = sbox[x[j]]; // sub bytes
-        
+
         // shift rows
         a = x[1], x[1] = x[5], x[5] = x[9], x[9] = x[13], x[13] = a, a = x[10], x[10] = x[2], x[2] = a;
         a = x[3], x[3] = x[15], x[15] = x[11], x[11] = x[7], x[7] = a, a = x[14], x[14] = x[6], x[6] = a;
-        
+
         for (j = 0; i < 13 && j < 16; j += 4) { // mix columns
             a = x[j], b = x[j+1], c = x[j+2], d = x[j+3], e = a ^ b ^ c ^ d;
             x[j] ^= e ^ xt(a ^ b), x[j+1] ^= e ^ xt(b ^ c), x[j+2] ^= e ^ xt(c ^ d), x[j+3] ^= e ^ xt(d ^ a);
@@ -100,7 +100,7 @@ static void AES256ECBEncrypt(const void *key, void *buf)
             for (j = 20; j < 32; j += 4) k[j] ^= k[j-4], k[j+1] ^= k[j-3], k[j+2] ^= k[j-2], k[j+3] ^= k[j-1];
         }
     }
-    
+
     for (i = 0; i < 4; i++) ((uint32_t *)x)[i] ^= ((uint32_t *)k)[i]; // final add round key
 }
 
@@ -108,7 +108,7 @@ static void AES256ECBDecrypt(const void *key, void *buf)
 {
     size_t i, j;
     uint8_t *x = buf, k[32], r = 1, a, b, c, d, e, f, g, h;
-    
+
     memcpy(k, key, sizeof(k));
 
     for (i = 0; i < 7; i++) { // expand key
@@ -117,7 +117,7 @@ static void AES256ECBDecrypt(const void *key, void *buf)
         k[16] ^= sbox[k[12]], k[17] ^= sbox[k[13]], k[18] ^= sbox[k[14]], k[19] ^= sbox[k[15]];
         for (j = 20; j < 32; j += 4) k[j] ^= k[j-4], k[j+1] ^= k[j-3], k[j+2] ^= k[j-2], k[j+3] ^= k[j-1];
     }
-    
+
     for (i = 0; i < 14; i++) {
         for (j = 0; j < 4; j++) ((uint32_t *)x)[j] ^= ((uint32_t *)k)[j + (i & 1)*4]; // add round key
 
@@ -130,9 +130,9 @@ static void AES256ECBDecrypt(const void *key, void *buf)
         // unshift rows
         a = x[1], x[1] = x[13], x[13] = x[9], x[9] = x[5], x[5] = a, a = x[2], x[2] = x[10], x[10] = a;
         a = x[3], x[3] = x[7], x[7] = x[11], x[11] = x[15], x[15] = a, a = x[6], x[6] = x[14], x[14] = a;
-        
+
         for (j = 0; j < 16; j++) x[j] = sboxi[x[j]]; // unsub bytes
-        
+
         if ((i % 2) == 0) { // unexpand key
             for (j = 28; j > 16; j -= 4) k[j] ^= k[j-4], k[j+1] ^= k[j-3], k[j+2] ^= k[j-2], k[j+3] ^= k[j-1];
             k[16] ^= sbox[k[12]], k[17] ^= sbox[k[13]], k[18] ^= sbox[k[14]], k[19] ^= sbox[k[15]];
@@ -141,7 +141,7 @@ static void AES256ECBDecrypt(const void *key, void *buf)
             k[0] ^= sbox[k[29]] ^ r, k[1] ^= sbox[k[30]], k[2] ^= sbox[k[31]], k[3] ^= sbox[k[28]];
         }
     }
-    
+
     for (i = 0; i < 4; i++) ((uint32_t *)x)[i] ^= ((uint32_t *)k)[i]; // final add round key
 }
 
@@ -260,7 +260,7 @@ static UInt256 derive_passfactor(uint8_t flag, uint64_t entropy, NSString *passp
 
     if (flag & BIP38_LOTSEQUENCE_FLAG) { // passfactor = SHA256(SHA256(prefactor + entropy))
         NSMutableData *d = [NSMutableData secureData];
-        
+
         [d appendBytes:&prefactor length:sizeof(prefactor)];
         [d appendBytes:&entropy length:sizeof(entropy)];
         return d.SHA256_2;
@@ -275,7 +275,7 @@ static UInt512 derive_key(NSData *passpoint, uint32_t addresshash, uint64_t entr
 
     *(uint32_t *)salt = addresshash;
     *(uint64_t *)(salt + sizeof(uint32_t)) = entropy; // salt = addresshash + entropy
- 
+
     scrypt(passpoint.bytes, passpoint.length, salt, sizeof(salt), BIP38_SCRYPT_EC_N, BIP38_SCRYPT_EC_R,
            BIP38_SCRYPT_EC_P, &dk, sizeof(dk));
     return dk;
@@ -284,7 +284,7 @@ static UInt512 derive_key(NSData *passpoint, uint32_t addresshash, uint64_t entr
 static NSData *point_gen(UInt256 factor)
 {
     NSMutableData *d = [NSMutableData secureDataWithLength:33];
-    
+
     BRSecp256k1PointGen(d.mutableBytes, &factor);
     return d;
 }
@@ -292,7 +292,7 @@ static NSData *point_gen(UInt256 factor)
 static NSData *point_mul(NSData *point, UInt256 factor)
 {
     NSMutableData *d = [NSMutableData secureDataWithData:point];
-    
+
     BRSecp256k1PointGen(d.mutableBytes, &factor);
     return d;
 }
@@ -398,7 +398,7 @@ passphrase:(NSString *)passphrase
         // d = prefix + flag + addresshash + encrypted1 + encrypted2
         NSData *pw = normalize_passphrase(passphrase);
         UInt512 derived;
-        
+
         scrypt(pw.bytes, pw.length, &addresshash, sizeof(addresshash), BIP38_SCRYPT_N, BIP38_SCRYPT_R, BIP38_SCRYPT_P,
                &derived, sizeof(derived));
 
@@ -408,7 +408,7 @@ passphrase:(NSString *)passphrase
         AES256ECBDecrypt(&derived2, &encrypted1);
         secret.u64[0] = encrypted1.u64[0] ^ derived1.u64[0];
         secret.u64[1] = encrypted1.u64[1] ^ derived1.u64[1];
-        
+
         AES256ECBDecrypt(&derived2, &encrypted2);
         secret.u64[2] = encrypted2.u64[0] ^ derived1.u64[2];
         secret.u64[3] = encrypted2.u64[1] ^ derived1.u64[3];
@@ -424,7 +424,7 @@ passphrase:(NSString *)passphrase
         NSMutableData *seedb = [NSMutableData secureDataWithLength:24];
 
         encrypted1.u64[0] = *(uint64_t *)((const uint8_t *)d.bytes + 15);
-        
+
         // encrypted2 = (encrypted1[8...15] + seedb[16...23]) xor derived1[16...31]
         AES256ECBDecrypt(&derived2, &encrypted2);
         encrypted1.u64[1] = encrypted2.u64[0] ^ derived1.u64[2];
@@ -465,7 +465,7 @@ passphrase:(NSString *)passphrase
            *address = [self.address dataUsingEncoding:NSUTF8StringEncoding];
     uint32_t salt = address.SHA256_2.u32[0];
     UInt512 derived;
-    
+
     scrypt(pw.bytes, pw.length, &salt, sizeof(salt), BIP38_SCRYPT_N, BIP38_SCRYPT_R, BIP38_SCRYPT_P, &derived, 64);
 
     UInt256 derived1 = *(UInt256 *)&derived, derived2 = *(UInt256 *)&derived.u64[4];
@@ -473,7 +473,7 @@ passphrase:(NSString *)passphrase
     NSMutableData *key = [NSMutableData secureData];
 
     if (priv.length > 33) flag |= BIP38_COMPRESSED_FLAG;
-    
+
     // enctryped1 = AES256Encrypt(privkey[0...15] xor derived1[0...15], derived2)
     encrypted1.u64[0] = ((uint64_t *)((uint8_t *)priv.bytes + 1))[0] ^ derived1.u64[0];
     encrypted1.u64[1] = ((uint64_t *)((uint8_t *)priv.bytes + 1))[1] ^ derived1.u64[1];
@@ -489,7 +489,7 @@ passphrase:(NSString *)passphrase
     [key appendBytes:&salt length:sizeof(salt)];
     [key appendBytes:&encrypted1 length:sizeof(encrypted1)];
     [key appendBytes:&encrypted2 length:sizeof(encrypted2)];
-    
+
     return [NSString base58checkWithData:key];
 }
 

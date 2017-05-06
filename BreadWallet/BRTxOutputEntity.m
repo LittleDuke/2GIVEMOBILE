@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 8/26/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -44,14 +44,14 @@
 {
     [self.managedObjectContext performBlockAndWait:^{
         UInt256 txHash = tx.txHash;
-    
+
         self.txHash = [NSData dataWithBytes:&txHash length:sizeof(txHash)];
         self.n = (int32_t)index;
         self.address = (tx.outputAddresses[index] == [NSNull null]) ? nil : tx.outputAddresses[index];
         self.script = tx.outputScripts[index];
         self.value = [tx.outputAmounts[index] longLongValue];
     }];
-    
+
     return self;
 }
 

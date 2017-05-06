@@ -4,7 +4,7 @@
 //
 //  Created by Samuel Sutch on 2/8/16.
 //  Copyright (c) 2016 breadwallet LLC
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2016 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ enum BRKeychainError: String, ErrorType {
     case UnableToClear = "Unable to clear the keychain"
     case Undefined = "An undefined error occurred"
     case Unimplemented = "Function or operation not implemented."
-    
+
     init?(fromStatusCode code: Int) {
         switch code {
         case Int(errSecAllocate):
@@ -102,7 +102,7 @@ class BRKeychain {
             }
             return nil
     }
-    
+
     static func saveData(data: [String: AnyObject], forUserAccount account: String,
         inService service: String = BreadDefaultService) throws {
             do {
@@ -117,7 +117,7 @@ class BRKeychain {
                 throw err
             }
     }
-    
+
     static func deleteDataForUserAccount(account: String, inService service: String = BreadDefaultService) throws {
         let q = getBaseQuery(account, service: service)
         let status: OSStatus = SecItemDelete(q)
@@ -125,7 +125,7 @@ class BRKeychain {
             throw err
         }
     }
-    
+
     private static func getBaseQuery(account: String, service: String) -> [String: AnyObject] {
         let query = [
             String(kSecClass): String(kSecClassGenericPassword),

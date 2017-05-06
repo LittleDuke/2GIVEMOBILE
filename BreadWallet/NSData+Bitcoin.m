@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 10/9/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@ static void SHA1Compress(uint32_t *r, uint32_t *x)
 {
     size_t i = 0;
     uint32_t a = r[0], b = r[1], c = r[2], d = r[3], e = r[4], t;
-    
+
     for (; i < 16; i++) sha1(f1(b, c, d), 0x5a827999, (x[i] = CFSwapInt32BigToHost(x[i])));
     for (; i < 20; i++) sha1(f1(b, c, d), 0x5a827999, (x[i] = rol32(x[i - 3] ^ x[i - 8] ^ x[i - 14] ^ x[i - 16], 1)));
     for (; i < 40; i++) sha1(f2(b, c, d), 0x6ed9eba1, (x[i] = rol32(x[i - 3] ^ x[i - 8] ^ x[i - 14] ^ x[i - 16], 1)));
@@ -57,13 +57,13 @@ void SHA1(void *md, const void *data, size_t len)
 {
     size_t i;
     uint32_t x[80], buf[] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 }; // initial buffer values
-    
+
     for (i = 0; i < len; i += 64) { // process data in 64 byte blocks
         memcpy(x, (const uint8_t *)data + i, (i + 64 < len) ? 64 : len - i);
         if (i + 64 > len) break;
         SHA1Compress(buf, x);
     }
-    
+
     memset((uint8_t *)x + (len - i), 0, 64 - (len - i)); // clear remainder of x
     ((uint8_t *)x)[len - i] = 0x80; // append padding
     if (len - i >= 56) SHA1Compress(buf, x), memset(x, 0, 64); // length goes to next block
@@ -97,19 +97,19 @@ static void SHA256Compress(uint32_t *r, uint32_t *x)
         0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
         0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
     };
-    
+
     size_t i;
     uint32_t a = r[0], b = r[1], c = r[2], d = r[3], e = r[4], f = r[5], g = r[6], h = r[7], t1, t2, w[64];
-    
+
     for (i = 0; i < 16; i++) w[i] = CFSwapInt32BigToHost(x[i]);
     for (; i < 64; i++) w[i] = s3(w[i - 2]) + w[i - 7] + s2(w[i - 15]) + w[i - 16];
-    
+
     for (i = 0; i < 64; i++) {
         t1 = h + s1(e) + ch(e, f, g) + k[i] + w[i];
         t2 = s0(a) + maj(a, b, c);
         h = g, g = f, f = e, e = d + t1, d = c, c = b, b = a, a = t1 + t2;
     }
-    
+
     r[0] += a, r[1] += b, r[2] += c, r[3] += d, r[4] += e, r[5] += f, r[6] += g, r[7] += h;
 }
 
@@ -118,7 +118,7 @@ void SHA256(void *md, const void *data, size_t len)
     size_t i;
     uint32_t x[16], buf[] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
                               0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 }; // initial buffer values
-    
+
     for (i = 0; i < len; i += 64) { // process data in 64 byte blocks
         memcpy(x, (const uint8_t *)data + i, (i + 64 < len) ? 64 : len - i);
         if (i + 64 > len) break;
@@ -162,19 +162,19 @@ static void SHA512Compress(uint64_t *r, uint64_t *x)
         0x113f9804bef90dae, 0x1b710b35131c471b, 0x28db77f523047d84, 0x32caab7b40c72493, 0x3c9ebe0a15c9bebc,
         0x431d67c49c100d4c, 0x4cc5d4becb3e42b6, 0x597f299cfc657e2a, 0x5fcb6fab3ad6faec, 0x6c44198c4a475817
     };
-    
+
     size_t i;
     uint64_t a = r[0], b = r[1], c = r[2], d = r[3], e = r[4], f = r[5], g = r[6], h = r[7], t1, t2, w[80];
-    
+
     for (i = 0; i < 16; i++) w[i] = CFSwapInt64BigToHost(x[i]);
     for (; i < 80; i++) w[i] = S3(w[i - 2]) + w[i - 7] + S2(w[i - 15]) + w[i - 16];
-    
+
     for (i = 0; i < 80; i++) {
         t1 = h + S1(e) + ch(e, f, g) + k[i] + w[i];
         t2 = S0(a) + maj(a, b, c);
         h = g, g = f, f = e, e = d + t1, d = c, c = b, b = a, a = t1 + t2;
     }
-    
+
     r[0] += a, r[1] += b, r[2] += c, r[3] += d, r[4] += e, r[5] += f, r[6] += g, r[7] += h;
 }
 
@@ -183,13 +183,13 @@ void SHA512(void *md, const void *data, size_t len)
     size_t i;
     uint64_t x[16], buf[] = { 0x6a09e667f3bcc908, 0xbb67ae8584caa73b, 0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
                               0x510e527fade682d1, 0x9b05688c2b3e6c1f, 0x1f83d9abfb41bd6b, 0x5be0cd19137e2179 };
-    
+
     for (i = 0; i < len; i += 128) { // process data in 128 byte blocks
         memcpy(x, (const uint8_t *)data + i, (i + 128 < len) ? 128 : len - i);
         if (i + 128 > len) break;
         SHA512Compress(buf, x);
     }
-    
+
     memset((uint8_t *)x + (len - i), 0, 128 - (len - i)); // clear remainder of x
     ((uint8_t *)x)[len - i] = 0x80; // append padding
     if (len - i >= 112) SHA512Compress(buf, x), memset(x, 0, 128); // length goes to next block
@@ -249,7 +249,7 @@ static void RMDCompress(uint32_t *r, uint32_t *x)
     for (i = 0; i < 16; i++) rmd(t, g(br, cr, dr), x[rr4[i]], 0x7a6d76e9, sr4[i], ar, er, dr, cr, br); // round 4 right
     for (i = 0; i < 16; i++) rmd(t, j(bl, cl, dl), x[rl5[i]], 0xa953fd4e, sl5[i], al, el, dl, cl, bl); // round 5 left
     for (i = 0; i < 16; i++) rmd(t, f(br, cr, dr), x[rr5[i]], 0x00000000, sr5[i], ar, er, dr, cr, br); // round 5 right
-    
+
     t = r[1] + cl + dr; // final result for r[0]
     r[1] = r[2] + dl + er, r[2] = r[3] + el + ar, r[3] = r[4] + al + br, r[4] = r[0] + bl + cr, r[0] = t; // combine
 }
@@ -259,13 +259,13 @@ void RMD160(void *md, const void *data, size_t len)
 {
     size_t i;
     uint32_t x[16], buf[] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0 }; // initial buffer values
-    
+
     for (i = 0; i <= len; i += 64) { // process data in 64 byte blocks
         memcpy(x, (const uint8_t *)data + i, (i + 64 < len) ? 64 : len - i);
         if (i + 64 > len) break;
         RMDCompress(buf, x);
     }
-    
+
     memset((uint8_t *)x + (len - i), 0, 64 - (len - i)); // clear remainder of x
     ((uint8_t *)x)[len - i] = 0x80; // append padding
     if (len - i >= 56) RMDCompress(buf, x), memset(x, 0, 64); // length goes to next block
@@ -296,17 +296,17 @@ static void MD5Compress(uint32_t *r, uint32_t *x)
         0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039, 0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
         0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1, 0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
     };
-    
+
     static const int s[] = { 7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21 };
-    
+
     int i = 0;
     uint32_t a = r[0], b = r[1], c = r[2], d = r[3], t;
-    
+
     for (; i < 16; i++) md5(F, a, b, c, d, x[i], k[i], s[i % 4], t);
     for (; i < 32; i++) md5(G, a, b, c, d, x[(5*i + 1) % 16], k[i], s[4 + (i % 4)], t);
     for (; i < 48; i++) md5(H, a, b, c, d, x[(3*i + 5) % 16], k[i], s[8 + (i % 4)], t);
     for (; i < 64; i++) md5(I, a, b, c, d, x[(7*i) % 16], k[i], s[12 + (i % 4)], t);
-    
+
     r[0] += a, r[1] += b, r[2] += c, r[3] += d;
     a = b = c = d = t = 0;
 }
@@ -316,13 +316,13 @@ void MD5(void *md, const void *data, size_t len)
 {
     size_t i;
     uint32_t x[16], buf[] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 }; // initial buffer values
-    
+
     for (i = 0; i <= len; i += 64) { // process data in 64 byte blocks
         memcpy(x, (const uint8_t *)data + i, (i + 64 < len) ? 64 : len - i);
         if (i + 64 > len) break;
         MD5Compress(buf, x);
     }
-    
+
     memset((uint8_t *)x + (len - i), 0, 64 - (len - i)); // clear remainder of x
     ((uint8_t *)x)[len - i] = 0x80; // append padding
     if (len - i >= 56) MD5Compress(buf, x), memset(x, 0, 64); // length goes to next block
@@ -341,7 +341,7 @@ void HMAC(void *md, void (*hash)(void *, const void *, size_t), size_t hlen, con
 {
     size_t blen = (hlen > 32) ? 128 : 64;
     uint8_t k[hlen], kipad[blen + dlen], kopad[blen + hlen];
-    
+
     if (klen > blen) hash(k, key, klen), key = k, klen = sizeof(k);
     memset(kipad, 0, blen);
     memcpy(kipad, key, klen);
@@ -352,7 +352,7 @@ void HMAC(void *md, void (*hash)(void *, const void *, size_t), size_t hlen, con
     memcpy(kipad + blen, data, dlen);
     hash(kopad + blen, kipad, sizeof(kipad));
     hash(md, kopad, sizeof(kopad));
-    
+
     memset(k, 0, sizeof(k));
     memset(kipad, 0, blen);
     memset(kopad, 0, blen);
@@ -369,9 +369,9 @@ void PBKDF2(void *dk, size_t dklen, void (*hash)(void *, const void *, size_t), 
 {
     uint8_t s[slen + sizeof(unsigned)], U[hlen], T[hlen];
     uint32_t i, j;
-    
+
     memcpy(s, salt, slen);
-    
+
     for (i = 0; i < (dklen + hlen - 1)/hlen; i++) {
         *(uint32_t *)(s + slen) = CFSwapInt32HostToBig(i + 1);
         HMAC(U, hash, hlen, pw, pwlen, s, sizeof(s)); // U1 = hmac_hash(pw, salt || INT32_BE(i))
@@ -385,7 +385,7 @@ void PBKDF2(void *dk, size_t dklen, void (*hash)(void *, const void *, size_t), 
         // dk = T1 || T2 || ... || Tdklen/hlen
         memcpy((uint8_t *)dk + i*hlen, T, (i*hlen + hlen <= dklen) ? hlen : dklen % hlen);
     }
-    
+
     memset(s, 0, sizeof(s));
     memset(U, 0, sizeof(U));
     memset(T, 0, sizeof(T));
@@ -398,14 +398,14 @@ static void _poly1305Compress(uint32_t h[5], const void *key32, const void *data
 {
     uint32_t x[4], b, t0, t1, t2, t3, t4, r0, r1, r2, r3, r4;
     uint64_t d0, d1, d2, d3, d4;
-    
+
     // r &= 0xffffffc0ffffffc0ffffffc0fffffff
     memcpy(x, key32, 16);
     t0 = CFSwapInt32HostToLittle(x[0]), t1 = CFSwapInt32HostToLittle(x[1]), t2 = CFSwapInt32HostToLittle(x[2]),
     t3 = CFSwapInt32HostToLittle(x[3]);
     r0 = t0 & 0x03ffffff, r1 = ((t0 >> 26) | (t1 << 6)) & 0x03ffff03, r2 = ((t1 >> 20) | (t2 << 12)) & 0x03ffc0ff;
     r3 = ((t2 >> 14) | (t3 << 18)) & 0x03f03fff, r4 = (t3 >> 8) & 0x000fffff;
-    
+
     for (size_t i = 0; i < len; i += 16) { // process data in 16 byte blocks
         if (i + 16 > len) {
             memcpy(x, (const uint8_t *)data + i, len - i);
@@ -413,50 +413,50 @@ static void _poly1305Compress(uint32_t h[5], const void *key32, const void *data
             ((uint8_t *)x)[len - i] = 1; // append padding
         }
         else memcpy(x, (const uint8_t *)data + i, 16);
-        
+
         // h += x
         t0 = le32(x[0]), t1 = le32(x[1]), t2 = le32(x[2]), t3 = le32(x[3]);
         h[0] += t0 & 0x03ffffff, h[1] += ((t0 >> 26) | (t1 << 6)) & 0x03ffffff;
         h[2] += ((t1 >> 20) | (t2 << 12)) & 0x03ffffff, h[3] += ((t2 >> 14) | (t3 << 18)) & 0x03ffffff;
         h[4] += (t3 >> 8) | ((i + 16 <= len) ? (1 << 24) : 0);
-        
+
         // h *= r
         d0 = (uint64_t)h[0]*r0 + (uint64_t)h[1]*r4*5 + (uint64_t)h[2]*r3*5 + (uint64_t)h[3]*r2*5 + (uint64_t)h[4]*r1*5;
         d1 = (uint64_t)h[0]*r1 + (uint64_t)h[1]*r0 + (uint64_t)h[2]*r4*5 + (uint64_t)h[3]*r3*5 + (uint64_t)h[4]*r2*5;
         d2 = (uint64_t)h[0]*r2 + (uint64_t)h[1]*r1 + (uint64_t)h[2]*r0 + (uint64_t)h[3]*r4*5 + (uint64_t)h[4]*r3*5;
         d3 = (uint64_t)h[0]*r3 + (uint64_t)h[1]*r2 + (uint64_t)h[2]*r1 + (uint64_t)h[3]*r0 + (uint64_t)h[4]*r4*5;
         d4 = (uint64_t)h[0]*r4 + (uint64_t)h[1]*r3 + (uint64_t)h[2]*r2 + (uint64_t)h[3]*r1 + (uint64_t)h[4]*r0;
-        
+
         // (partial) h %= p
         d1 += (uint32_t)(d0 >> 26), h[1] = d1 & 0x03ffffff, d2 += (uint32_t)(d1 >> 26), h[2] = d2 & 0x03ffffff;
         d3 += (uint32_t)(d2 >> 26), h[3] = d3 & 0x03ffffff, d4 += (uint32_t)(d3 >> 26), h[4] = d4 & 0x03ffffff;
         h[0] = (d0 & 0x03ffffff) + (uint32_t)(d4 >> 26)*5, h[1] += h[0] >> 26, h[0] &= 0x03ffffff;
     }
-    
+
     if (final) {
         // fully carry h
         h[2] += h[1] >> 26, h[1] &= 0x03ffffff, h[3] += h[2] >> 26, h[2] &= 0x03ffffff, h[4] += h[3] >> 26;
         h[3] &= 0x03ffffff, h[0] += (h[4] >> 26)*5, h[4] &= 0x03ffffff, h[1] += h[0] >> 26, h[0] &= 0x03ffffff;
-        
+
         // compute h + -p
         t0 = h[0] + 5, t1 = h[1] + (t0 >> 26), t0 &= 0x03ffffff, t2 = h[2] + (t1 >> 26), t1 &= 0x03ffffff;
         t3 = h[3] + (t2 >> 26), t2 &= 0x03ffffff, t4 = h[4] + (t3 >> 26) - (1 << 26), t3 &= 0x03ffffff;
-        
+
         // select h if h < p, or h + -p if h >= p
         b = (t4 >> 31) - 1, h[0] = (h[0] & ~b) | (t0 & b), h[1] = (h[1] & ~b) | (t1 & b);
         h[2] = (h[2] & ~b) | (t2 & b), h[3] = (h[3] & ~b) | (t3 & b), h[4] = (h[4] & ~b) | (t4 & b);
-        
+
         // h = h % (2^128)
         h[0] = (h[0] | (h[1] << 26)) & 0x0ffffffff, h[1] = ((h[1] >> 6) | (h[2] << 20)) & 0x0ffffffff;
         h[2] = ((h[2] >> 12) | (h[3] << 14)) & 0x0ffffffff, h[3] = ((h[3] >> 18) | (h[4] << 8)) & 0x0ffffffff;
-        
+
         // mac = (h + pad) % (2^128)
         memcpy(x, (const uint8_t *)key32 + 16, 16);
         d0 = (uint64_t)h[0] + le32(x[0]), d1 = (uint64_t)h[1] + le32(x[1]) + (d0 >> 32);
         d2 = (uint64_t)h[2] + le32(x[2]) + (d1 >> 32), d3 = (uint64_t)h[3] + le32(x[3]) + (d2 >> 32);
         h[0] = le32((uint32_t)d0), h[1] = le32((uint32_t)d1), h[2] = le32((uint32_t)d2), h[3] = le32((uint32_t)d3);
     }
-    
+
     d0 = d1 = d2 = d3 = d4 = 0;
     x[0] = x[1] = x[2] = x[3] = b = t0 = t1 = t2 = t3 = t4 = r0 = r1 = r2 = r3 = r4 = 0;
 }
@@ -466,11 +466,11 @@ static void _poly1305Compress(uint32_t h[5], const void *key32, const void *data
 void poly1305(void *mac16, const void *key32, const void *data, size_t len)
 {
     uint32_t h[5] = { 0, 0, 0, 0, 0 };
-    
+
     assert(mac16 != NULL);
     assert(data != NULL || len == 0);
     assert(key32 != NULL);
-    
+
     _poly1305Compress(h, key32, data, len, 1);
     memcpy(mac16, h, 16);
     h[0] = h[1] = h[2] = h[3] = h[4] = 0;
@@ -486,41 +486,41 @@ void chacha20(void *out, const void *key32, const void *iv8, const void *data, s
     static const char sigma[16] = "expand 32-byte k";
     uint32_t b[16], s[16], x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
     size_t i, j;
-    
+
     assert(out != NULL || len == 0);
     assert(data != NULL || len == 0);
     assert(key32 != NULL);
     assert(iv8 != NULL);
-    
+
     memcpy(s, sigma, 16);
     memcpy(&s[4], key32, 32);
     s[12] = le32((uint32_t)counter);
     s[13] = le32(counter >> 32);
     memcpy(&s[14], iv8, 8);
     for (i = 0; i < 16; i++) s[i] = le32(s[i]);
-    
+
     for (i = 0; i < len; i++) {
         if (i % 64 == 0) {
             x0 = s[0], x1 = s[1], x2 = s[2], x3 = s[3], x4 = s[4], x5 = s[5], x6 = s[6], x7 = s[7];
             x8 = s[8], x9 = s[9], x10 = s[10], x11 = s[11], x12 = s[12], x13 = s[13], x14 = s[14], x15 = s[15];
-            
+
             for (j = 0; j < 10; j++) {
                 qr(x0, x4, x8, x12), qr(x1, x5, x9, x13), qr(x2, x6, x10, x14), qr(x3, x7, x11, x15);
                 qr(x0, x5, x10, x15), qr(x1, x6, x11, x12), qr(x2, x7, x8, x13), qr(x3, x4, x9, x14);
             }
-            
+
             b[0] = le32(s[0] + x0), b[1] = le32(s[1] + x1), b[2] = le32(s[2] + x2), b[3] = le32(s[3] + x3);
             b[4] = le32(s[4] + x4), b[5] = le32(s[5] + x5), b[6] = le32(s[6] + x6), b[7] = le32(s[7] + x7);
             b[8] = le32(s[8] + x8), b[9] = le32(s[9] + x9), b[10] = le32(s[10] + x10), b[11] = le32(s[11] + x11);
             b[12] = le32(s[12] + x12), b[13] = le32(s[13] + x13), b[14] = le32(s[14] + x14), b[15] = le32(s[15] + x15);
-            
+
             s[12]++;
             if (s[12] == 0) s[13]++;
         }
-        
+
         ((uint8_t *)out)[i] = ((const uint8_t *)data)[i] ^ ((uint8_t *)b)[i % 64];
     }
-    
+
     x0 = x1 = x2 = x3 = x4 = x5 = x6 = x7 = x8 = x9 = x10 = x11 = x12 = x13 = x14 = x15 = 0;
     memset(s, 0, sizeof(s));
     memset(b, 0, sizeof(b));
@@ -533,15 +533,15 @@ size_t chacha20Poly1305AEADEncrypt(void *out, size_t outLen, const void *key32, 
     const void *iv = (const uint8_t *)nonce12 + 4;
     uint64_t counter = 0, macKey[4] = { 0, 0, 0, 0 }, pad[2] = { 0, 0 };
     uint32_t h[5] = { 0, 0, 0, 0, 0 };
-    
+
     if (! out) return dataLen + 16;
     if (outLen < dataLen + 16 || dataLen/64 >= UINT32_MAX) return 0;
-    
+
     assert(key32 != NULL);
     assert(nonce12 != NULL);
     assert(data != NULL || dataLen == 0);
     assert(ad != NULL || adLen == 0);
-    
+
     memcpy(&((uint32_t *)&counter)[1], nonce12, sizeof(uint32_t));
     chacha20(macKey, key32, iv, macKey, sizeof(macKey), le64(counter));
     _poly1305Compress(h, macKey, ad, (adLen/16)*16, 0);
@@ -567,15 +567,15 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
     const void *iv = (const uint8_t *)nonce12 + 4;
     uint64_t counter = 0, macKey[4] = { 0, 0, 0, 0 }, pad[2] = { 0, 0 };
     uint32_t h[5] = { 0, 0, 0, 0, 0 }, mac[4];
-    
+
     if (! out) return (dataLen < 16) ? 0 : dataLen - 16;
     if (dataLen < 16 || (dataLen - 16)/64 >= UINT32_MAX || outLen < dataLen - 16) return 0;
-    
+
     assert(key32 != NULL);
     assert(nonce12 != NULL);
     assert(data != NULL || dataLen == 0);
     assert(ad != NULL || adLen == 0);
-    
+
     outLen = dataLen - 16;
     memcpy(&((uint32_t *)&counter)[1], nonce12, sizeof(uint32_t));
     chacha20(macKey, key32, iv, macKey, sizeof(macKey), le64(counter));
@@ -630,7 +630,7 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
 - (UInt256)SHA256
 {
     UInt256 sha256;
-    
+
     SHA256(&sha256, self.bytes, self.length);
     return sha256;
 }
@@ -638,7 +638,7 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
 - (UInt256)SHA256_2
 {
     UInt256 sha256;
-    
+
     SHA256(&sha256, self.bytes, self.length);
     SHA256(&sha256, &sha256, sizeof(sha256));
     return sha256;
@@ -647,7 +647,7 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
 - (UInt512)SHA512
 {
     UInt512 sha512;
-    
+
     SHA512(&sha512, self.bytes, self.length);
     return sha512;
 }
@@ -655,7 +655,7 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
 - (UInt160)RMD160
 {
     UInt160 rmd160;
-    
+
     RMD160(&rmd160, self.bytes, (size_t)self.length);
     return rmd160;
 }
@@ -664,7 +664,7 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
 {
     UInt256 sha256;
     UInt160 rmd160;
-    
+
     SHA256(&sha256, self.bytes, self.length);
     RMD160(&rmd160, &sha256, sizeof(sha256));
     return rmd160;
@@ -680,7 +680,7 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
 - (UInt128)MD5
 {
     UInt128 md5;
-    
+
     MD5(&md5, self.bytes, self.length);
     return md5;
 }
@@ -691,11 +691,11 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
     NSMutableData *d = [NSMutableData dataWithLength:len];
     uint8_t *b1 = d.mutableBytes;
     const uint8_t *b2 = self.bytes;
-    
+
     for (NSUInteger i = 0; i < len; i++) {
         b1[i] = b2[len - i - 1];
     }
-    
+
     return d;
 }
 
@@ -731,15 +731,15 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
         case VAR_INT16_HEADER:
             if (length) *length = sizeof(h) + sizeof(uint16_t);
             return [self UInt16AtOffset:offset + 1];
-            
+
         case VAR_INT32_HEADER:
             if (length) *length = sizeof(h) + sizeof(uint32_t);
             return [self UInt32AtOffset:offset + 1];
-            
+
         case VAR_INT64_HEADER:
             if (length) *length = sizeof(h) + sizeof(uint64_t);
             return [self UInt64AtOffset:offset + 1];
-            
+
         default:
             if (length) *length = sizeof(h);
             return h;
@@ -755,7 +755,7 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
 - (NSString *)stringAtOffset:(NSUInteger)offset length:(NSUInteger *)length
 {
     NSUInteger ll, l = (NSUInteger)[self varIntAtOffset:offset length:&ll];
-    
+
     if (length) *length = ll + l;
     if (ll == 0 || self.length < offset + ll + l) return nil;
     return [[NSString alloc] initWithBytes:(const char *)self.bytes + offset + ll length:l
@@ -765,7 +765,7 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
 - (NSData *)dataAtOffset:(NSUInteger)offset length:(NSUInteger *)length
 {
     NSUInteger ll, l = (NSUInteger)[self varIntAtOffset:offset length:&ll];
-    
+
     if (length) *length = ll + l;
     if (ll == 0 || self.length < offset + ll + l) return nil;
     return [self subdataWithRange:NSMakeRange(offset + ll, l)];
@@ -777,14 +777,14 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
     NSMutableArray *a = [NSMutableArray array];
     const uint8_t *b = (const uint8_t *)self.bytes;
     NSUInteger l, length = self.length;
-    
+
     for (NSUInteger i = 0; i < length; i += l) {
         if (b[i] > OP_PUSHDATA4) {
             l = 1;
             [a addObject:@(b[i])];
             continue;
         }
-        
+
         switch (b[i]) {
             case 0:
                 l = 1;
@@ -817,11 +817,11 @@ size_t chacha20Poly1305AEADDecrypt(void *out, size_t outLen, const void *key32, 
                 i++;
                 break;
         }
-        
+
         if (i + l > length) return a;
         [a addObject:[NSData dataWithBytes:&b[i] length:l]];
     }
-    
+
     return a;
 }
 

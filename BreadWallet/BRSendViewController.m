@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 5/8/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +54,7 @@
 static NSString *sanitizeString(NSString *s)
 {
     NSMutableString *sane = [NSMutableString stringWithString:(s) ? s : @""];
-    
+
     CFStringTransform((CFMutableStringRef)sane, NULL, kCFStringTransformToUnicodeName, NO);
     return sane;
 }
@@ -92,7 +92,7 @@ static NSString *sanitizeString(NSString *s)
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    
+
     self.addressView.layer.cornerRadius = 3;
     self.addressView.layer.borderWidth = 3;
     self.addressView.layer.borderColor = (__bridge CGColorRef _Nullable)([UIColor colorWithRed:242.0 green:249.0 blue:253.0 alpha:1.0]);
@@ -109,19 +109,19 @@ static NSString *sanitizeString(NSString *s)
     self.sendButton.layer.borderWidth = 3;
     self.sendButton.layer.borderColor = (__bridge CGColorRef _Nullable)([UIColor colorWithRed:40.0 green:40.0 blue:40.0 alpha:0.90]);
     self.sendButton.clipsToBounds = YES;
-    
+
     // TODO: XXX redesign page with round buttons like the iOS power down screen... apple watch also has round buttons
     self.scanButton.titleLabel.adjustsFontSizeToFitWidth = YES;
     self.clipboardButton.titleLabel.adjustsFontSizeToFitWidth = YES;
-    
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.scanButton.titleLabel.adjustsLetterSpacingToFitWidth = YES;
     self.clipboardButton.titleLabel.adjustsLetterSpacingToFitWidth = YES;
 #pragma clang diagnostic pop
-    
+
     self.clipboardText.textContainerInset = UIEdgeInsetsMake(8.0, 0.0, 0.0, 0.0);
-    
+
     self.clipboardObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:UIPasteboardChangedNotification object:nil queue:nil
         usingBlock:^(NSNotification *note) {
@@ -130,14 +130,14 @@ static NSString *sanitizeString(NSString *s)
             }
             else [self updateClipboardText];
         }];
-    
+
     BRWalletManager *manager = [BRWalletManager sharedInstance];
-    
+
     self.amountField.placeholder = [manager stringForAmount:0];
     self.localAmountField.placeholder = [NSString stringWithFormat:@"0.00"];
-    
+
     // Done and cancel button for decimal pad
-    
+
     UIToolbar* decimalPad = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 50)];
     decimalPad.barStyle = UIBarStyleDefault;
     decimalPad.items = @[[[UIBarButtonItem alloc]initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelNumberPad)],
@@ -146,9 +146,9 @@ static NSString *sanitizeString(NSString *s)
     [decimalPad sizeToFit];
     self.amountField.inputAccessoryView = decimalPad;
     self.localAmountField.inputAccessoryView = decimalPad;
-    
+
     // Change default Currency Code (USD) to Local Currency Code
-    
+
     self.localCurrencyNameLabel.text = manager.localCurrencyCode;
 }
 
@@ -161,7 +161,7 @@ static NSString *sanitizeString(NSString *s)
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+
     if (! self.scanController) {
         self.scanController = [self.storyboard instantiateViewControllerWithIdentifier:@"ScanViewController"];
     }
@@ -209,7 +209,7 @@ static NSString *sanitizeString(NSString *s)
 {
     BRWalletManager *manager = [BRWalletManager sharedInstance];
     uint64_t amount = [manager amountForString:self.amountField.text];
-    
+
     self.localAmountField.hidden = NO;
     self.localAmountField.text = [NSString stringWithFormat:@"%@",
                                     [manager localCurrencyStringForAmount:amount]];
@@ -219,10 +219,10 @@ static NSString *sanitizeString(NSString *s)
 - (void)updateCurrencyField
 {
     BRWalletManager *manager = [BRWalletManager sharedInstance];
-    
+
     NSString *s = self.localAmountField.text;
     uint64_t amount = [manager amountForLocalCurrencyString: s];
-    
+
     self.amountField.text = [NSString stringWithFormat:@"%@", [manager stringForAmount:amount]];
 }
 
@@ -232,7 +232,7 @@ static NSString *sanitizeString(NSString *s)
                withAttributes:@{@"scheme": (url.scheme ? url.scheme : @"(null)"),
                                 @"host": (url.host ? url.host : @"(null)"),
                                 @"path": (url.path ? url.path : @"(null)")}];
-    
+
     //TODO: XXX custom url splash image per: "Providing Launch Images for Custom URL Schemes."
     BRWalletManager *manager = [BRWalletManager sharedInstance];
     if ([url.scheme isEqual:@"loaf"]) { // x-callback-url handling: http://x-callback-url.com/specifications/
@@ -253,14 +253,14 @@ static NSString *sanitizeString(NSString *s)
             else if ([pair[0] isEqual:@"x-error"]) xerror = value;
             else if ([pair[0] isEqual:@"uri"]) uri = value;
         }
-    
+
         if ([url.host isEqual:@"scanqr"] || [url.path isEqual:@"/scanqr"]) { // scan qr
             [self scanQR:self.scanButton];
         }
         else if ([url.host isEqual:@"addresslist"] || [url.path isEqual:@"/addresslist"]) { // copy wallet addresses
             if ((manager.didAuthenticate || [manager authenticateWithPrompt:nil andTouchId:YES])
                 && ! self.clearClipboard) {
-                
+
                 if (! [self.url isEqual:url]) {
                     self.url = url;
                     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"copy wallet addresses to clipboard?", nil)
@@ -295,7 +295,7 @@ static NSString *sanitizeString(NSString *s)
             if (xsuccess) self.callback = [NSURL URLWithString:xsuccess];
             [self handleURL:[NSURL URLWithString:uri]];
         }
-        
+
         if (callback) [[UIApplication sharedApplication] openURL:callback];
     }
     else if ([url.scheme isEqual:@"litecoin"]) {
@@ -320,14 +320,14 @@ static NSString *sanitizeString(NSString *s)
 
     // TODO: reject payments that don't match requested amounts/scripts, implement refunds
     BRPaymentProtocolPayment *payment = [BRPaymentProtocolPayment paymentWithData:file];
-            
+
     if (payment.transactions.count > 0) {
         for (BRTransaction *tx in payment.transactions) {
             [(id)self.parentViewController.parentViewController startActivityWithTimeout:30];
 
             [[BRPeerManager sharedInstance] publishTransaction:tx completion:^(NSError *error) {
                 [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
-                
+
                 if (error) {
                     [[[UIAlertView alloc]
                       initWithTitle:NSLocalizedString(@"couldn't transmit payment to bitcoin network", nil)
@@ -344,9 +344,9 @@ static NSString *sanitizeString(NSString *s)
 
         return;
     }
-    
+
     BRPaymentProtocolACK *ack = [BRPaymentProtocolACK ackWithData:file];
-            
+
     if (ack) {
         if (ack.memo.length > 0) {
             [self.view addSubview:[[[BRBubbleView viewWithText:ack.memo
@@ -367,7 +367,7 @@ static NSString *sanitizeString(NSString *s)
         return;
     }
     BRBitID *bitid = [[BRBitID alloc] initWithUrl:url];
-    
+
     void (^actionHandler)(UIAlertAction * _Nonnull) = ^(UIAlertAction * _Nonnull action) {
         [self dismissViewControllerAnimated:YES completion:nil];
         if (action.style == UIAlertActionStyleDefault) {
@@ -402,14 +402,14 @@ static NSString *sanitizeString(NSString *s)
                     [self.navigationController presentViewController:errorAlert animated:YES completion:nil];
                 }
             };
-            // attempt to avoid frozen pin input bug 
+            // attempt to avoid frozen pin input bug
             CFRunLoopPerformBlock([[NSRunLoop mainRunLoop] getCFRunLoop], kCFRunLoopCommonModes, ^{
                 [bitid runCallback:callbackHandler];
                 [self.navigationController presentViewController:activityVC animated:YES completion:nil];
             });
         }
     };
-    
+
     NSString *message = [NSString stringWithFormat:
                          NSLocalizedString(@"%@ is requesting authentication using your bitcoin wallet.", nil),
                          bitid.siteName];
@@ -543,7 +543,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     else if (amount == 0 || amount == UINT64_MAX) {
         BRAmountViewController *amountController = [self.storyboard
                                                     instantiateViewControllerWithIdentifier:@"AmountViewController"];
-        
+
         amountController.delegate = self;
         self.request = protoReq;
 
@@ -579,9 +579,9 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         [self cancel:nil];
         return;
     }
-    
+
     self.request = protoReq;
-    
+
     if (self.amount == 0) {
         tx = [manager.wallet transactionForAmounts:protoReq.details.outputAmounts
               toOutputScripts:protoReq.details.outputScripts withFee:YES];
@@ -590,7 +590,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         tx = [manager.wallet transactionForAmounts:@[@(self.amount)]
               toOutputScripts:@[protoReq.details.outputScripts.firstObject] withFee:YES];
     }
-    
+
     if (tx) {
         amount = [manager.wallet amountSentByTransaction:tx] - [manager.wallet amountReceivedFromTransaction:tx];
         fee = [manager.wallet feeForTransaction:tx];
@@ -604,15 +604,15 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
     for (NSData *script in protoReq.details.outputScripts) {
         NSString *addr = [NSString addressWithScriptPubKey:script];
-            
+
         if (! addr) addr = NSLocalizedString(@"unrecognized address", nil);
         if ([address rangeOfString:addr].location != NSNotFound) continue;
         address = [address stringByAppendingFormat:@"%@%@", (address.length > 0) ? @", " : @"", addr];
     }
-    
+
     NSString *prompt = [self promptForAmount:amount fee:fee address:address name:protoReq.commonName
                         memo:protoReq.details.memo isSecure:(valid && ! [protoReq.pkiType isEqual:@"none"])];
-    
+
     // to avoid the frozen pincode keyboard bug, we need to make sure we're scheduled normally on the main runloop
     // rather than a dispatch_async queue
     CFRunLoopPerformBlock([[NSRunLoop mainRunLoop] getCFRunLoop], kCFRunLoopCommonModes, ^{
@@ -627,10 +627,10 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
     if (! tx) { // tx is nil if there were insufficient wallet funds
         if (! manager.didAuthenticate) [manager seedWithPrompt:prompt forAmount:amount];
-        
+
         if (manager.didAuthenticate) {
             uint64_t fuzz = [manager amountForLocalCurrencyString:[manager localCurrencyStringForAmount:1]]*2;
-            
+
             // if user selected an amount equal to or below wallet balance, but the fee will bring the total above the
             // balance, offer to reduce the amount to available funds minus fee
             if (self.amount <= manager.wallet.balance + fuzz && self.amount > 0) {
@@ -675,15 +675,15 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         [self cancelOrChangeAmount];
         return;
     }
-    
+
     if (self.navigationController.topViewController != self.parentViewController.parentViewController) {
         [self.navigationController popToRootViewControllerAnimated:YES];
     }
-    
+
     __block BOOL waiting = YES, sent = NO;
-    
+
     [(id)self.parentViewController.parentViewController startActivityWithTimeout:30.0];
-    
+
     [[BRPeerManager sharedInstance] publishTransaction:tx completion:^(NSError *error) {
         if (error) {
             if (! waiting && ! sent) {
@@ -711,19 +711,19 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                                                                              length:sizeof(UInt256)].reverse]]];
                 [[UIApplication sharedApplication] openURL:self.callback];
             }
-            
+
             [self reset:nil];
         }
-        
+
         waiting = NO;
     }];
-    
+
     if (self.request.details.paymentURL.length > 0) {
         uint64_t refundAmount = 0;
         NSMutableData *refundScript = [NSMutableData data];
-    
+
         [refundScript appendScriptPubKeyForAddress:manager.wallet.receiveAddress];
-        
+
         for (NSNumber *amt in self.request.details.outputAmounts) {
             refundAmount += amt.unsignedLongLongValue;
         }
@@ -732,14 +732,14 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         BRPaymentProtocolPayment *payment =
             [[BRPaymentProtocolPayment alloc] initWithMerchantData:self.request.details.merchantData
              transactions:@[tx] refundToAmounts:@[@(refundAmount)] refundToScripts:@[refundScript] memo:nil];
-    
+
         NSLog(@"posting payment to: %@", self.request.details.paymentURL);
-    
+
         [BRPaymentRequest postPayment:payment to:self.request.details.paymentURL timeout:20.0
         completion:^(BRPaymentProtocolACK *ack, NSError *error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
-    
+
                 if (error) {
                     if (! waiting && ! sent) {
                         [[[UIAlertView alloc] initWithTitle:@"" message:error.localizedDescription delegate:nil
@@ -767,7 +767,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                                                                                      length:sizeof(UInt256)].reverse]]];
                         [[UIApplication sharedApplication] openURL:self.callback];
                     }
-                    
+
                     [self reset:nil];
                 }
 
@@ -781,7 +781,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 - (void)confirmSweep:(NSString *)privKey
 {
     BRWalletManager *manager = [BRWalletManager sharedInstance];
-    
+
     if (! [privKey isValidBitcoinPrivateKey] && ! [privKey isValidBitcoinBIP38Key]) return;
 
     BRBubbleView *statusView = [BRBubbleView viewWithText:NSLocalizedString(@"checking private key balance...", nil)
@@ -827,7 +827,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     BRWalletManager *manager = [BRWalletManager sharedInstance];
     BRBubbleView *statusView = [BRBubbleView viewWithText:NSLocalizedString(@"checking address balance...", nil)
                        center:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)];
-    
+
     statusView.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
     statusView.customView = [[UIActivityIndicatorView alloc]
                              initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
@@ -838,7 +838,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     completion:^(NSArray *utxos, NSArray *amounts, NSArray *scripts, NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [statusView popOut];
-        
+
             if (error) {
                 [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't check address balance", nil)
                   message:error.localizedDescription delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
@@ -846,9 +846,9 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
             }
             else {
                 uint64_t balance = 0;
-            
+
                 for (NSNumber *amt in amounts) balance += amt.unsignedLongLongValue;
-            
+
                 NSString *alertMsg = [NSString stringWithFormat:NSLocalizedString(@"%@\n\nbalance: %@", nil),
                                       address, [manager stringForAmount:balance]];
 
@@ -884,7 +884,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
     self.tipView = nil;
     [tipView popOut];
-    
+
     if ([tipView.text hasPrefix:SCAN_TIP]) {
 //        self.tipView = [BRBubbleView viewWithText:CLIPBOARD_TIP
 //                        tipPoint:CGPointMake(self.clipboardButton.center.x, self.clipboardButton.center.y + 10.0)
@@ -917,16 +917,16 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         UIImage *img = [UIPasteboard generalPasteboard].image;
         NSMutableOrderedSet *set = [NSMutableOrderedSet orderedSet];
         NSCharacterSet *separators = [NSCharacterSet alphanumericCharacterSet].invertedSet;
-        
+
         if (str) {
             [set addObject:str];
             [set addObjectsFromArray:[str componentsSeparatedByCharactersInSet:separators]];
         }
-        
+
         if (img && &CIDetectorTypeQRCode) {
             @synchronized ([CIContext class]) {
                 CIContext *context = [CIContext contextWithOptions:@{kCIContextUseSoftwareRenderer:@(YES)}];
-                
+
                 if (! context) context = [CIContext context];
 
                 for (CIQRCodeFeature *qr in [[CIDetector detectorOfType:CIDetectorTypeQRCode context:context
@@ -936,10 +936,10 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                 }
             }
         }
-    
+
         for (NSString *s in set) {
             BRPaymentRequest *req = [BRPaymentRequest requestWithString:s];
-            
+
             if ([req.paymentAddress isValidBitcoinAddress]) {
                 text = (req.label.length > 0) ? sanitizeString(req.label) : req.paymentAddress;
                 break;
@@ -970,12 +970,12 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     for (NSString *str in array) {
         BRPaymentRequest *req = [BRPaymentRequest requestWithString:str];
         NSData *data = str.hexToData.reverse;
-        
+
         i++;
-        
+
         // if the clipboard contains a known txHash, we know it's not a hex encoded private key
         if (data.length == sizeof(UInt256) && [manager.wallet transactionForHash:*(UInt256 *)data.bytes]) continue;
-        
+
         if ([req.paymentAddress isValidBitcoinAddress] || [str isValidBitcoinPrivateKey] ||
             [str isValidBitcoinBIP38Key] || (req.r.length > 0 && [req.scheme isEqual:@"litecoin"])) {
             [self performSelector:@selector(confirmRequest:) withObject:req afterDelay:0.1];// delayed to show highlight
@@ -993,11 +993,11 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                     else [self confirmProtocolRequest:req];
                 });
             }];
-            
+
             return;
         }
     }
-    
+
     [[[UIAlertView alloc] initWithTitle:@""
       message:NSLocalizedString(@"clipboard doesn't contain a valid bitcoin address", nil) delegate:nil
       cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
@@ -1037,39 +1037,39 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 - (IBAction)tapPay:(id)sender {
     // TODO:- Test that this works
     // Clear up stuff that's not needed.
-    
+
     BRWalletManager *manager = [BRWalletManager sharedInstance];
-    
+
     if (manager.didAuthenticate) {
-        
+
         if ([self nextTip]) return;
         self.amount = [manager amountForString:self.amountField.text];
-        
+
         if (self.amount == 0){
             [BREventManager saveEvent:@"amount:pay_zero"];
             return;
         }
-        
+
         [BREventManager saveEvent:@"amount:pay"];
         [BREventManager saveEvent:@"send:pay_clipboard"];
-        
+
         NSString *str = [[UIPasteboard generalPasteboard].string
                          stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         UIImage *img = [UIPasteboard generalPasteboard].image;
         NSMutableOrderedSet *set = [NSMutableOrderedSet orderedSet];
         NSCharacterSet *separators = [NSCharacterSet alphanumericCharacterSet].invertedSet;
-        
+
         if (str) {
             [set addObject:str];
             [set addObjectsFromArray:[str componentsSeparatedByCharactersInSet:separators]];
         }
-        
+
         if (img && &CIDetectorTypeQRCode) {
             @synchronized ([CIContext class]) {
                 CIContext *context = [CIContext contextWithOptions:@{kCIContextUseSoftwareRenderer:@(YES)}];
-            
+
                 if (! context) context = [CIContext context];
-            
+
                 for (CIQRCodeFeature *qr in [[CIDetector detectorOfType:CIDetectorTypeQRCode context:context options:nil]
                                          featuresInImage:[CIImage imageWithCGImage:img.CGImage]]) {
                     [set addObject:[qr.messageString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
@@ -1079,7 +1079,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
         self.clearClipboard = YES;
         [self payFirstFromArray:set.array];
-        
+
     } else if (! manager.didAuthenticate){
         UIAlertView *authRequired = [[UIAlertView alloc] initWithTitle:@"Unlock Wallet" message:@"You must unlock your wallet first. Tap the padlock on the top-right of the screen to unlock." delegate:self cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil];
         [authRequired show];
@@ -1126,9 +1126,9 @@ fromConnection:(AVCaptureConnection *)connection
 {
     for (AVMetadataMachineReadableCodeObject *codeObject in metadataObjects) {
         if (! [codeObject.type isEqual:AVMetadataObjectTypeQRCode]) continue;
-        
+
         [BREventManager saveEvent:@"send:scanned_qr"];
-        
+
         NSString *addr = [codeObject.stringValue stringByTrimmingCharactersInSet:
                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
         BRPaymentRequest *request = [BRPaymentRequest requestWithString:addr];
@@ -1149,7 +1149,7 @@ fromConnection:(AVCaptureConnection *)connection
                 completion:^(BRPaymentProtocolRequest *req, NSError *error) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         if (error) request.r = nil;
-                    
+
                         if (error && ! request.isValid) {
                             [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
                               message:error.localizedDescription delegate:nil
@@ -1161,7 +1161,7 @@ fromConnection:(AVCaptureConnection *)connection
                         [self.navigationController dismissViewControllerAnimated:YES completion:^{
                             [self resetQRGuide];
                         }];
-                        
+
                         if (error) {
                             [BREventManager saveEvent:@"send:unsuccessful_qr_payment_protocol_fetch"];
                             [self confirmRequest:request]; // payment protocol fetch failed, so use standard request
@@ -1178,7 +1178,7 @@ fromConnection:(AVCaptureConnection *)connection
                     [self resetQRGuide];
                     if (request.amount > 0) self.canChangeAmount = YES;
                 }];
-                
+
                 if (request.isValid && self.showBalance) {
                     [self showBalance:request.paymentAddress];
                     [self cancel:nil];
@@ -1190,21 +1190,21 @@ fromConnection:(AVCaptureConnection *)connection
             completion:^(BRPaymentProtocolRequest *req, NSError *error) { // check to see if it's a BIP73 url
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resetQRGuide) object:nil];
-                    
+
                     if (req) {
                         self.scanController.cameraGuide.image = [UIImage imageNamed:@"cameraguide-green"];
                         [self.scanController stop];
-                        
+
                         [self.navigationController dismissViewControllerAnimated:YES completion:^{
                             [self resetQRGuide];
                         }];
-                        
+
                         [BREventManager saveEvent:@"send:successful_bip73"];
                         [self confirmProtocolRequest:req];
                     }
                     else {
                         self.scanController.cameraGuide.image = [UIImage imageNamed:@"cameraguide-red"];
-                        
+
                         if (([request.scheme isEqual:@"litecoin"] && request.paymentAddress.length > 1) ||
                             [request.paymentAddress hasPrefix:@"L"] || [request.paymentAddress hasPrefix:@"3"]) {
                             self.scanController.message.text = [NSString stringWithFormat:@"%@:\n%@",
@@ -1212,7 +1212,7 @@ fromConnection:(AVCaptureConnection *)connection
                                                                 request.paymentAddress];
                         }
                         else self.scanController.message.text = NSLocalizedString(@"not a bitcoin QR code", nil);
-                        
+
                         [self performSelector:@selector(resetQRGuide) withObject:nil afterDelay:0.35];
                         [BREventManager saveEvent:@"send:unsuccessful_bip73"];
                     }
@@ -1229,7 +1229,7 @@ fromConnection:(AVCaptureConnection *)connection
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
-    
+
     if (buttonIndex == alertView.cancelButtonIndex || [title isEqual:NSLocalizedString(@"cancel", nil)]) {
         if (self.url) {
             self.clearClipboard = YES;
@@ -1277,7 +1277,7 @@ fromConnection:(AVCaptureConnection *)connection
     self.useClipboard = NO;
     self.clipboardText.text = [UIPasteboard generalPasteboard].string;
     [textView scrollRangeToVisible:textView.selectedRange];
-    
+
 //    [UIView animateWithDuration:0.35 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
 //        self.view.center = CGPointMake(self.view.center.x, self.view.bounds.size.height/2.0 - 100.0);
 //        self.sendLabel.alpha = 0.0;
@@ -1290,7 +1290,7 @@ fromConnection:(AVCaptureConnection *)connection
 //        self.view.center = CGPointMake(self.view.center.x, self.view.bounds.size.height/2.0);
 //        self.sendLabel.alpha = 1.0;
 //    } completion:nil];
-    
+
     if (! self.useClipboard) [UIPasteboard generalPasteboard].string = textView.text;
     [self updateClipboardText];
 }
@@ -1301,7 +1301,7 @@ fromConnection:(AVCaptureConnection *)connection
         [textView resignFirstResponder];
         return NO;
     }
-    
+
     if (text.length > 0 || range.length > 0) self.useClipboard = NO;
     return YES;
 }

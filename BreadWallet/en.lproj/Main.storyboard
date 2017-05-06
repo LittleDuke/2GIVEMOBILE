@@ -2315,7 +2315,7 @@
                                         <rect key="frame" x="85" y="192" width="207" height="101"/>
                                         <gestureRecognizers/>
                                         <string key="text">LoafWallet v%ver%%net%
-© 2016 Litecoin Association
+© 2017 Litecoin Foundation
 
 Based on BreadWallet
 © BreadWallet LLC</string>

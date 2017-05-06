@@ -4,7 +4,7 @@
 //
 //  Created by Loshan T on 30/05/2016.
 //  Copyright © 2016 Aaron Voisine. All rights reserved.
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -37,16 +37,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     // Adding border to Generate Button
-    
+
     self.genButton.layer.cornerRadius = 2;
     self.genButton.layer.borderWidth = 2;
     self.genButton.layer.borderColor = (__bridge CGColorRef _Nullable)([UIColor colorWithRed:40.0 green:40.0 blue:40.0 alpha:0.90]);
     self.genButton.clipsToBounds = YES;
-    
+
     [self.genButton setTitle:NSLocalizedString(@"continue", nil) forState:UIControlStateNormal];
-    
+
     }
 
 @end

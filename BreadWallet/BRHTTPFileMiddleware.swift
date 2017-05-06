@@ -4,7 +4,7 @@
 //
 //  Created by Samuel Sutch on 2/8/16.
 //  Copyright (c) 2016 breadwallet LLC
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -30,13 +30,13 @@ import Foundation
 @objc open class BRHTTPFileMiddleware: NSObject, BRHTTPMiddleware {
     var baseURL: URL!
     var debugURL: URL?
-    
+
     init(baseURL: URL, debugURL: URL? = nil) {
         super.init()
         self.baseURL = baseURL
         self.debugURL = debugURL
     }
-    
+
     open func handle(_ request: BRHTTPRequest, next: @escaping (BRHTTPMiddlewareResponse) -> Void) {
         var fileURL: URL!
         var body: Data!
@@ -88,7 +88,7 @@ import Foundation
                     body = dat
                     contentTypeHint = resp.allHeaderFields["Content-Type"] as? String
                 } else {
-                    
+
                 }
             }).resume()
             _ = grp.wait(timeout: DispatchTime.now() + Double(Int64(30) * Int64(NSEC_PER_SEC)) / Double(NSEC_PER_SEC))
@@ -97,9 +97,9 @@ import Foundation
                 return next(BRHTTPMiddlewareResponse(request: request, response: nil))
             }
         }
-        
+
         headers["Content-Type"] = [contentTypeHint ?? detectContentType(URL: fileURL)]
-        
+
         do {
             let privReq = request as! BRHTTPRequestImpl
             let rangeHeader = try privReq.rangeHeader()
@@ -130,7 +130,7 @@ import Foundation
                 body: [UInt8]("Invalid Range Header".utf8))
             return next(BRHTTPMiddlewareResponse(request: request, response: r))
         }
-        
+
         var ary = [UInt8](repeating: 0, count: body.count)
         body.copyBytes(to: &ary, count: body.count)
         let r = BRHTTPResponse(
@@ -141,7 +141,7 @@ import Foundation
             body: ary)
         return next(BRHTTPMiddlewareResponse(request: request, response: r))
     }
-    
+
     fileprivate func detectContentType(URL url: URL) -> String {
         let ext = url.pathExtension
         switch ext {

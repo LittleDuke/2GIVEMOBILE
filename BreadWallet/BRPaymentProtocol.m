@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 4/21/14.
 //  Copyright (c) 2014 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -252,11 +252,11 @@ merchantData:(NSData *)data
     if (! [_outputAmounts containsObject:@(UINT64_MAX)]) return _outputAmounts;
 
     NSMutableArray *amounts = [NSMutableArray arrayWithArray:_outputAmounts];
-    
+
     while ([amounts containsObject:@(UINT64_MAX)]) {
         amounts[[amounts indexOfObject:@(UINT64_MAX)]] = @(0);
     }
-    
+
     return amounts;
 }
 
@@ -384,7 +384,7 @@ details:(BRPaymentProtocolDetails *)details signature:(NSData *)sig
 - (BOOL)isValid
 {
     BOOL r = YES;
-    
+
     if (! [self.pkiType isEqual:@"none"]) {
         NSMutableArray *certs = [NSMutableArray array];
         NSArray *policies = @[CFBridgingRelease(SecPolicyCreateBasicX509())];
@@ -393,7 +393,7 @@ details:(BRPaymentProtocolDetails *)details signature:(NSData *)sig
 
         for (NSData *d in self.certs) {
             SecCertificateRef cert = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)d);
-            
+
             if (cert) [certs addObject:CFBridgingRelease(cert)];
         }
 
@@ -414,7 +414,7 @@ details:(BRPaymentProtocolDetails *)details signature:(NSData *)sig
                 _errorMessage = [_errorMessage stringByAppendingFormat:@" - %@", property[@"value"]];
                 break;
             }
-            
+
             r = NO;
         }
 
@@ -432,7 +432,7 @@ details:(BRPaymentProtocolDetails *)details signature:(NSData *)sig
             status = SecKeyRawVerify(pubKey, kSecPaddingPKCS1SHA1, self.data.SHA1.u8, sizeof(UInt160), sig.bytes,
                                      sig.length);
         }
-        
+
         _signature = sig;
         if (pubKey) CFRelease(pubKey);
         if (trust) CFRelease(trust);
@@ -447,7 +447,7 @@ details:(BRPaymentProtocolDetails *)details signature:(NSData *)sig
                                  userInfo:nil].localizedDescription;
                 NSLog(@"SecKeyRawVerify error: %@", _errorMessage);
             }
-            
+
             r = NO;
         }
     }
@@ -526,13 +526,13 @@ refundToAmounts:(NSArray *)amounts refundToScripts:(NSArray *)scripts memo:(NSSt
 - (NSArray *)refundToAmounts
 {
     if (! [_refundToAmounts containsObject:@(UINT64_MAX)]) return _refundToAmounts;
-    
+
     NSMutableArray *amounts = [NSMutableArray arrayWithArray:_refundToAmounts];
-    
+
     while ([amounts containsObject:@(UINT64_MAX)]) {
         amounts[[amounts indexOfObject:@(UINT64_MAX)]] = @(0);
     }
-    
+
     return amounts;
 }
 
@@ -550,7 +550,7 @@ refundToAmounts:(NSArray *)amounts refundToScripts:(NSArray *)scripts memo:(NSSt
     for (NSData *script in _refundToScripts) {
         NSMutableData *output = [NSMutableData data];
         uint64_t amount = [_refundToAmounts[i++] unsignedLongLongValue];
-        
+
         if (amount != UINT64_MAX) [output appendProtoBufInt:amount withKey:output_amount];
         [output appendProtoBufData:script withKey:output_script];
         [d appendProtoBufData:output withKey:payment_refund_to];

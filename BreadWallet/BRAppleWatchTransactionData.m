@@ -4,7 +4,7 @@
 //
 //  Created by Henry on 10/27/15.
 //  Copyright (c) 2015 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -42,20 +42,20 @@
         _dateText = [decoder decodeObjectForKey:AW_TRANSACTION_DATA_DATE_KEY];
         _type = [[decoder decodeObjectForKey:AW_TRANSACTION_DATA_TYPE_KEY] intValue];
     }
-    
+
     return self;
 }
 
 + (instancetype)appleWatchTransactionDataFrom:(BRTransaction *)transaction
 {
     BRAppleWatchTransactionData *appleWatchTransactionData;
-    
+
     if (transaction) {
         appleWatchTransactionData = [BRAppleWatchTransactionData new];
         appleWatchTransactionData.amountText = transaction.amountText;
         appleWatchTransactionData.amountTextInLocalCurrency = transaction.localCurrencyTextForAmount;
         appleWatchTransactionData.dateText = transaction.dateText;
-        
+
         switch (transaction.transactionType) {
             case BRTransactionTypeSent: appleWatchTransactionData.type = BRAWTransactionTypeSent; break;
             case BRTransactionTypeReceive: appleWatchTransactionData.type = BRAWTransactionTypeReceive; break;
@@ -63,7 +63,7 @@
             case BRTransactionTypeInvalid: appleWatchTransactionData.type = BRAWTransactionTypeInvalid; break;
         }
     }
-    
+
     return appleWatchTransactionData;
 }
 

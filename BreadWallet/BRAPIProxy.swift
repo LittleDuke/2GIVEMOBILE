@@ -4,7 +4,7 @@
 //
 //  Created by Samuel Sutch on 2/8/16.
 //  Copyright (c) 2016 breadwallet LLC
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2016 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
 import Foundation
 
 // Add this middleware to a BRHTTPServer to expose a proxy to the breadwallet HTTP api
-// It has all the capabilities of the real API but with the ability to authenticate 
+// It has all the capabilities of the real API but with the ability to authenticate
 // requests using the users private keys stored on device.
 //
 // Clients should set the "X-Should-Authenticate" to sign requests with the users private authentication key
@@ -35,7 +35,7 @@ import Foundation
     var mountPoint: String
     var apiInstance: BRAPIClient
     var shouldAuthHeader: String = "x-should-authenticate"
-    
+
     var bannedSendHeaders: [String] {
         return [
             shouldAuthHeader,
@@ -45,9 +45,9 @@ import Foundation
             "user-agent"
         ]
     }
-    
+
     var bannedReceiveHeaders: [String] = ["content-length", "content-encoding", "connection"]
-    
+
     init(mountAt: String, client: BRAPIClient) {
         mountPoint = mountAt
         if mountPoint.hasSuffix("/") {
@@ -56,7 +56,7 @@ import Foundation
         apiInstance = client
         super.init()
     }
-    
+
     open func handle(_ request: BRHTTPRequest, next: @escaping (BRHTTPMiddlewareResponse) -> Void) {
         if request.path.hasPrefix(mountPoint) {
             let idx = request.path.characters.index(request.path.startIndex, offsetBy: mountPoint.characters.count)
@@ -77,7 +77,7 @@ import Foundation
                     nsReq.setValue(hdr, forHTTPHeaderField: hdrName)
                 }
             }
-            
+
             var auth = false
             if let authHeader = request.headers[shouldAuthHeader] , authHeader.count > 0 {
                 if authHeader[0].lowercased() == "yes" || authHeader[0].lowercased() == "true" {

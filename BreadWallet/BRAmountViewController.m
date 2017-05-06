@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 6/4/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -65,13 +65,13 @@
                       style:UIBarButtonItemStylePlain target:self action:@selector(pay:)];
     self.amountField.placeholder = [manager stringForAmount:0];
     [self.decimalButton setTitle:manager.format.currencyDecimalSeparator forState:UIControlStateNormal];
-    
+
     self.swapLeftLabel = [UILabel new];
     self.swapLeftLabel.font = self.localCurrencyLabel.font;
     self.swapLeftLabel.alpha = self.localCurrencyLabel.alpha;
     self.swapLeftLabel.textAlignment = self.localCurrencyLabel.textAlignment;
     self.swapLeftLabel.hidden = YES;
-    
+
     self.swapRightLabel = [UILabel new];
     self.swapRightLabel.font = self.amountField.font;
     self.swapRightLabel.alpha = self.amountField.alpha;
@@ -79,7 +79,7 @@
     self.swapRightLabel.hidden = YES;
 
     [self updateLocalCurrencyLabel];
-    
+
     self.balanceObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:BRWalletBalanceChangedNotification object:nil queue:nil
         usingBlock:^(NSNotification *note) {
@@ -88,7 +88,7 @@
             self.navigationItem.title = [NSString stringWithFormat:@"%@  LTC",
                                          [manager stringForAmount:manager.wallet.balance]];
         }];
-    
+
     self.backgroundObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil
         queue:nil usingBlock:^(NSNotification *note) {
@@ -105,7 +105,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+
     self.memoField.text = (self.to.length > 0) ?
                           [NSString stringWithFormat:NSLocalizedString(@"to: %@", nil), self.to] : nil;
     self.wallpaper.hidden = NO;
@@ -153,10 +153,10 @@
 {
     BRWalletManager *manager = [BRWalletManager sharedInstance];
     [BREventManager saveEvent:@"amount:unlock"];
-    
+
     if (sender && ! manager.didAuthenticate && ! [manager authenticateWithPrompt:nil andTouchId:YES]) return;
     [BREventManager saveEvent:@"amount:successful_unlock"];
-    
+
     self.navigationItem.titleView = nil;
     [self.navigationItem setRightBarButtonItem:self.payButton animated:(sender) ? YES : NO];
 }
@@ -190,9 +190,9 @@
         [BREventManager saveEvent:@"amount:pay_zero"];
         return;
     }
-    
+
     [BREventManager saveEvent:@"amount:pay"];
-    
+
     [self.delegate amountViewController:self selectedAmount:self.amount];
 }
 
@@ -247,7 +247,7 @@
     else self.amountField.placeholder = nil;
 
     [self.view layoutIfNeeded];
-    
+
     CGPoint p = CGPointMake(self.localCurrencyLabel.frame.origin.x + self.localCurrencyLabel.bounds.size.width/2.0 +
                             self.amountField.bounds.size.width/2.0,
                             self.localCurrencyLabel.center.y/2.0 + self.amountField.center.y/2.0);
@@ -355,7 +355,7 @@ replacementString:(NSString *)string
         return [zeroStr stringByReplacingCharactersInRange:NSMakeRange(NSMaxRange(zeroCharacterRange), 0)
                                                 withString:numberFormatter.currencyDecimalSeparator];
     };
-    
+
     if (string.length == 0) { // delete button
         textVal = [textVal stringByReplacingCharactersInRange:range withString:string];
 
@@ -393,7 +393,7 @@ replacementString:(NSString *)string
                        stringByReplacingCharactersInRange:range withString:string]]];
         }
     }
-    
+
     if (textVal) textField.text = textVal;
     numberFormatter.minimumFractionDigits = minimumFractionDigits;
     if (textVal.length > 0 && textField.placeholder.length > 0) textField.placeholder = nil;
@@ -401,7 +401,7 @@ replacementString:(NSString *)string
     if (textVal.length == 0 && textField.placeholder.length == 0) {
         textField.placeholder = (self.swapped) ? [manager localCurrencyStringForAmount:0] : [manager stringForAmount:0];
     }
-    
+
     if (self.navigationController.viewControllers.firstObject != self) {
         if (! manager.didAuthenticate && textVal.length == 0 && self.navigationItem.rightBarButtonItem != self.lock) {
             [self.navigationItem setRightBarButtonItem:self.lock animated:YES];

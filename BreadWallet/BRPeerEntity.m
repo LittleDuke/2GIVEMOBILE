@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 10/6/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@
 - (BRPeer *)peer
 {
     __block BRPeer *peer = nil;
-        
+
     [self.managedObjectContext performBlockAndWait:^{
         UInt128 address = { .u32 = { 0, 0, CFSwapInt32HostToBig(0xffff), CFSwapInt32HostToBig(self.address) } };
 

@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 10/22/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,7 @@
 inline static int ceil_log2(int x)
 {
     int r = (x & (x - 1)) ? 1 : 0;
-    
+
     while ((x >>= 1) != 0) r++;
     return r;
 }
@@ -70,7 +70,7 @@ inline static int ceil_log2(int x)
 @interface BRMerkleBlock ()
 
 @property (nonatomic, assign) UInt256 blockHash;
-    
+
 @end
 
 @implementation BRMerkleBlock
@@ -84,7 +84,7 @@ inline static int ceil_log2(int x)
 - (instancetype)initWithMessage:(NSData *)message
 {
     if (! (self = [self init])) return nil;
-    
+
     if (message.length < 80) return nil;
 
     NSUInteger off = 0, l = 0, len = 0;
@@ -110,7 +110,7 @@ inline static int ceil_log2(int x)
     off += len;
     _flags = [message dataAtOffset:off length:&l];
     _height = BLOCK_UNKNOWN_HEIGHT;
-    
+
     [d appendUInt32:_version];
     [d appendBytes:&_prevBlock length:sizeof(_prevBlock)];
     [d appendBytes:&_merkleRoot length:sizeof(_merkleRoot)];
@@ -128,7 +128,7 @@ merkleRoot:(UInt256)merkleRoot timestamp:(uint32_t)timestamp target:(uint32_t)ta
 totalTransactions:(uint32_t)totalTransactions hashes:(NSData *)hashes flags:(NSData *)flags height:(uint32_t)height
 {
     if (! (self = [self init])) return nil;
-    
+
     _blockHash = blockHash;
     _version = version;
     _prevBlock = prevBlock;
@@ -140,7 +140,7 @@ totalTransactions:(uint32_t)totalTransactions hashes:(NSData *)hashes flags:(NSD
     _hashes = hashes;
     _flags = flags;
     _height = height;
-    
+
     return self;
 }
 
@@ -170,42 +170,42 @@ totalTransactions:(uint32_t)totalTransactions hashes:(NSData *)hashes flags:(NSD
             [d appendBytes:&r length:sizeof(r)];
             return uint256_obj(d.SHA256_2);
         }];
-    
+
     [root getValue:&merkleRoot];
     if (_totalTransactions > 0 && ! uint256_eq(merkleRoot, _merkleRoot)) return NO; // merkle root check failed
-    
+
     // check if timestamp is too far in future
     //TODO: use estimated network time instead of system time (avoids timejacking attacks and misconfigured time)
     if (_timestamp > [NSDate timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970 + MAX_TIME_DRIFT) return NO;
 
     // limit to MAX_PROOF_OF_WORK
     if (size > maxsize || (size == maxsize && target > maxtarget)) target = maxtarget, size = maxsize;
-    
+
     // check if proof-of-work target is out of range
     if (target == 0 || target & 0x00800000u || size > maxsize || (size == maxsize && target > maxtarget)) return NO;
 
     if (size > 3) *(uint32_t *)&t.u8[size - 3] = CFSwapInt32HostToLittle(target);
     else t.u32[0] = CFSwapInt32HostToLittle(target >> (3 - size)*8);
-    
+
     for (int i = sizeof(t)/sizeof(uint32_t) - 1; i >= 0; i--) { // check proof-of-work
         if (CFSwapInt32LittleToHost(_powHash.u32[i]) < CFSwapInt32LittleToHost(t.u32[i])) break;
         if (CFSwapInt32LittleToHost(_powHash.u32[i]) > CFSwapInt32LittleToHost(t.u32[i])) return NO;
     }
-    
+
     return YES;
 }
 
 - (NSData *)toData
 {
     NSMutableData *d = [NSMutableData data];
-    
+
     [d appendUInt32:_version];
     [d appendBytes:&_prevBlock length:sizeof(_prevBlock)];
     [d appendBytes:&_merkleRoot length:sizeof(_merkleRoot)];
     [d appendUInt32:_timestamp];
     [d appendUInt32:_target];
     [d appendUInt32:_nonce];
-    
+
     if (_totalTransactions > 0) {
         [d appendUInt32:_totalTransactions];
         [d appendVarInt:_hashes.length/sizeof(UInt256)];
@@ -213,7 +213,7 @@ totalTransactions:(uint32_t)totalTransactions hashes:(NSData *)hashes flags:(NSD
         [d appendVarInt:_flags.length];
         [d appendData:_flags];
     }
-    
+
     return d;
 }
 
@@ -223,7 +223,7 @@ totalTransactions:(uint32_t)totalTransactions hashes:(NSData *)hashes flags:(NSD
     for (NSUInteger i = 0; i < _hashes.length/sizeof(UInt256); i += sizeof(UInt256)) {
         if (uint256_eq(txHash, [_hashes hashAtOffset:i])) return YES;
     }
-    
+
     return NO;
 }
 
@@ -237,7 +237,7 @@ totalTransactions:(uint32_t)totalTransactions hashes:(NSData *)hashes flags:(NSD
         } :^id (id left, id right) {
             return [left arrayByAddingObjectsFromArray:right];
         }];
-    
+
     return txHashes;
 }
 
@@ -269,21 +269,21 @@ totalTransactions:(uint32_t)totalTransactions hashes:(NSData *)hashes flags:(NSD
 - (id)_walk:(int *)hashIdx :(int *)flagIdx :(int)depth :(id (^)(id, BOOL))leaf :(id (^)(id, id))branch
 {
     if ((*flagIdx)/8 >= _flags.length || (*hashIdx + 1)*sizeof(UInt256) > _hashes.length) return leaf(nil, NO);
-    
+
     BOOL flag = (((const uint8_t *)_flags.bytes)[*flagIdx/8] & (1 << (*flagIdx % 8)));
-    
+
     (*flagIdx)++;
-    
+
     if (! flag || depth == ceil_log2(_totalTransactions)) {
         UInt256 hash = [_hashes hashAtOffset:(*hashIdx)*sizeof(UInt256)];
-        
+
         (*hashIdx)++;
         return leaf(uint256_obj(hash), flag);
     }
-    
+
     id left = [self _walk:hashIdx :flagIdx :depth + 1 :leaf :branch];
     id right = [self _walk:hashIdx :flagIdx :depth + 1 :leaf :branch];
-    
+
     return branch(left, right);
 }
 

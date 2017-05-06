@@ -3,7 +3,7 @@
 //
 //  Created by Aaron Voisine on 8/22/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -40,12 +40,12 @@ static NSUInteger _fetchBatchSize = 100;
 {
     __block NSEntityDescription *entity = nil;
     __block NSManagedObject *obj = nil;
-    
+
     [self.context performBlockAndWait:^{
         entity = [NSEntityDescription entityForName:self.entityName inManagedObjectContext:self.context];
         obj = [[self alloc] initWithEntity:entity insertIntoManagedObjectContext:self.context];
     }];
-    
+
     return obj;
 }
 
@@ -53,15 +53,15 @@ static NSUInteger _fetchBatchSize = 100;
 {
     __block NSEntityDescription *entity = nil;
     NSMutableArray *a = [NSMutableArray arrayWithCapacity:length];
-    
+
     [self.context performBlockAndWait:^{
         entity = [NSEntityDescription entityForName:self.entityName inManagedObjectContext:self.context];
-        
+
         for (NSUInteger i = 0; i < length; i++) {
             [a addObject:[[self alloc] initWithEntity:entity insertIntoManagedObjectContext:self.context]];
         }
     }];
-    
+
     return a;
 }
 
@@ -86,7 +86,7 @@ static NSUInteger _fetchBatchSize = 100;
 + (NSArray *)objectsMatching:(NSString *)predicateFormat arguments:(va_list)args
 {
     NSFetchRequest *request = self.fetchReq;
-    
+
     request.predicate = [NSPredicate predicateWithFormat:predicateFormat arguments:args];
     return [self fetchObjects:request];
 }
@@ -99,7 +99,7 @@ static NSUInteger _fetchBatchSize = 100;
 + (NSArray *)objectsSortedBy:(NSString *)key ascending:(BOOL)ascending offset:(NSUInteger)offset limit:(NSUInteger)limit
 {
     NSFetchRequest *request = self.fetchReq;
-    
+
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:key ascending:ascending]];
     request.fetchOffset = offset;
     request.fetchLimit = limit;
@@ -126,7 +126,7 @@ static NSUInteger _fetchBatchSize = 100;
             @throw;
         }
     }];
-     
+
     return a;
 }
 
@@ -141,7 +141,7 @@ static NSUInteger _fetchBatchSize = 100;
 {
     NSUInteger count;
     va_list args;
-    
+
     va_start(args, predicateFormat);
     count = [self countObjectsMatching:predicateFormat arguments:args];
     va_end(args);
@@ -151,7 +151,7 @@ static NSUInteger _fetchBatchSize = 100;
 + (NSUInteger)countObjectsMatching:(NSString *)predicateFormat arguments:(va_list)args
 {
     NSFetchRequest *request = self.fetchReq;
-    
+
     request.predicate = [NSPredicate predicateWithFormat:predicateFormat arguments:args];
     return [self countObjects:request];
 }
@@ -176,7 +176,7 @@ static NSUInteger _fetchBatchSize = 100;
             @throw;
         }
     }];
-    
+
     return count;
 }
 
@@ -189,7 +189,7 @@ static NSUInteger _fetchBatchSize = 100;
             [self.context deleteObject:obj];
         }
     }];
-    
+
     return objects.count;
 }
 
@@ -212,7 +212,7 @@ static NSUInteger _fetchBatchSize = 100;
 + (NSManagedObjectContext *)context
 {
     static dispatch_once_t onceToken = 0;
-    
+
     dispatch_once(&onceToken, ^{
         NSURL *docURL =
             [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].lastObject;
@@ -223,7 +223,7 @@ static NSUInteger _fetchBatchSize = 100;
         NSPersistentStoreCoordinator *coordinator =
             [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:model];
         NSError *error = nil;
-        
+
         if ([coordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL
              options:@{NSMigratePersistentStoresAutomaticallyOption:@(YES),
                        NSInferMappingModelAutomaticallyOption:@(YES)} error:&error] == nil) {
@@ -235,7 +235,7 @@ static NSUInteger _fetchBatchSize = 100;
             if (! [[NSFileManager defaultManager] removeItemAtURL:storeURL error:&error]) {
                 NSLog(@"%s: %@", __func__, error);
             }
-            
+
             if ([coordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL
                  options:@{NSMigratePersistentStoresAutomaticallyOption:@(YES),
                            NSInferMappingModelAutomaticallyOption:@(YES)} error:&error] == nil) {
@@ -284,7 +284,7 @@ static NSUInteger _fetchBatchSize = 100;
 + (void)saveContext
 {
     if (! self.context.hasChanges) return;
-    
+
     [self.context performBlockAndWait:^{
         if (self.context.hasChanges) {
             @autoreleasepool {
@@ -300,7 +300,7 @@ static NSUInteger _fetchBatchSize = 100;
                     abort();
 #endif
                 }
-                
+
                 [[UIApplication sharedApplication] endBackgroundTask:taskId];
             }
         }

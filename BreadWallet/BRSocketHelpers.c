@@ -4,7 +4,7 @@
 //
 //  Created by Samuel Sutch on 2/17/16.
 //  Copyright (c) 2016 breadwallet LLC
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -57,10 +57,10 @@ struct bw_select_result bw_select(struct bw_select_request request) {
         // printf("bw_select: write fd=%i open=%i\n", fd, fcntl(fd, F_GETFD));
         FD_SET(fd, &write_fds);
     }
-    
+
     struct bw_select_result result = { 0, 0, 0, 0, NULL, NULL, NULL };
     // printf("bw_select max_fd=%i\n", max_fd);
-    
+
     // initiate a select
     struct timeval tv;
     tv.tv_sec = 0;

@@ -4,7 +4,7 @@
 //
 //  Created by Samuel Sutch on 2/8/16.
 //  Copyright (c) 2016 breadwallet LLC
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2016 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ enum BRTarType {
     case headerBlock
     case unsupported
     case invalid
-    
+
     init(fromData: Data) {
         if fromData.count < 1 {
             BRTar.log("invalid data")
@@ -75,7 +75,7 @@ class BRTar {
     static let tarSizeSize: UInt64 = 12
     static let tarMaxBlockLoadInMemory: UInt64 = 100
     static let tarLogEnabled: Bool = false
-    
+
     static func createFilesAndDirectoriesAtPath(_ path: String, withTarPath tarPath: String) throws {
         let fm = FileManager.default
         if !fm.fileExists(atPath: tarPath) {
@@ -93,7 +93,7 @@ class BRTar {
             throw BRTarError.unknown
         }
         let size = UInt64(sizee)
-        
+
         while loc < size {
             var blockCount: UInt64 = 1
             let tarType = readTypeAtLocation(loc, fromHandle: tarFh)
@@ -106,7 +106,7 @@ class BRTar {
                 log("will write to \(newFilePath)")
                 var size = readSizeAtLocation(loc, fromHandle: tarFh)
                 log("its size is \(size)")
-                
+
                 if fm.fileExists(atPath: newFilePath) {
                     try fm.removeItem(atPath: newFilePath)
                 }
@@ -139,11 +139,11 @@ class BRTar {
                 log("got new directory name \(name)")
                 let dirPath = (path as NSString).appendingPathComponent(name)
                 log("will create directory at \(dirPath)")
-                
+
                 if fm.fileExists(atPath: dirPath) {
                     try fm.removeItem(atPath: dirPath) // will automatically recursively remove directories if exists
                 }
-                
+
                 try fm.createDirectory(atPath: dirPath, withIntermediateDirectories: true, attributes: nil)
                 log("success creating directory")
                 break
@@ -164,7 +164,7 @@ class BRTar {
             log("new location \(loc)")
         }
     }
-    
+
     static fileprivate func readTypeAtLocation(_ location: UInt64, fromHandle handle: FileHandle) -> BRTarType {
         log("reading type at location \(location)")
         handle.seek(toFileOffset: location + tarTypePosition)
@@ -173,7 +173,7 @@ class BRTar {
         log("type: \(ret)")
         return ret
     }
-    
+
     static fileprivate func readNameAtLocation(_ location: UInt64, fromHandle handle: FileHandle) throws -> String {
         handle.seek(toFileOffset: location + tarNamePosition)
         let dat = handle.readData(ofLength: Int(tarNameSize))
@@ -183,7 +183,7 @@ class BRTar {
         }
         return ret
     }
-    
+
     static fileprivate func readSizeAtLocation(_ location: UInt64, fromHandle handle: FileHandle) -> UInt64 {
         handle.seek(toFileOffset: location + tarSizePosition)
         let sizeDat = handle.readData(ofLength: Int(tarSizeSize))
@@ -193,7 +193,7 @@ class BRTar {
         log("size decimal: \(dec)")
         return UInt64(dec)
     }
-    
+
     static fileprivate func log(_ string: String) {
         if tarLogEnabled {
             print("[BRTar] \(string)")

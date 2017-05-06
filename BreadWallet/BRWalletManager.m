@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 3/2/14.
 //  Copyright (c) 2014 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -47,8 +47,8 @@
 #define UNSPENT_URL          @"https://api.breadwallet.com/q/addrs/utxo"
 #define UNSPENT_FAILOVER_URL @"https://insight.bitpay.com/api/addrs/utxo"
 #define FEE_PER_KB_URL       @"https://api.breadwallet.com/fee-per-kb"
-#define TICKER_URL           @"https://www.loshan.co.uk/api/v1/info"
-#define TICKER_FAILOVER_URL  @"https://litecoin.com/api/v1/ticker"
+#define TICKER_URL           @"https://litecoin.com/api/v1/ticker"
+#define TICKER_FAILOVER_URL  @"https://www.loshan.co.uk/api/v1/info"
 
 #define SEED_ENTROPY_LENGTH   (128/8)
 #define SEC_ATTR_SERVICE      @"com.litecoin.loafwallet"
@@ -571,7 +571,7 @@ static NSDictionary *getKeychainDict(NSString *key, NSError **error)
 - (BOOL)isTestnet {
 #if BITCOIN_TESTNET
     return true;
-#else 
+#else
     return false;
 #endif
 }

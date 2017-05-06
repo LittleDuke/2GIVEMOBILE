@@ -4,7 +4,7 @@
 //
 //  Created by Loshan T on 15/06/2016.
 //  Copyright © 2016 Aaron Voisine. All rights reserved.
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -749,12 +749,12 @@ static NSString *dateFormat(NSString *template)
     UIViewController *to = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey],
     *from = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     BOOL pop = (to == self || (from != self && [to isKindOfClass:[BRSettingsViewController class]])) ? YES : NO;
-    
+
     if (self.wallpaper.superview != containerView) [containerView insertSubview:self.wallpaper belowSubview:from.view];
     self.wallpaper.clipsToBounds = NO;
     to.view.center = CGPointMake(containerView.frame.size.width*(pop ? -1 : 3)/2, to.view.center.y);
     [containerView addSubview:to.view];
-    
+
     [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0 usingSpringWithDamping:0.8
           initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
               to.view.center = from.view.center;

@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 3/21/14.
 //  Copyright (c) 2014 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@
     if (! _words) {
         _words = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:WORDS ofType:@"plist"]];
     }
-    
+
     return _words;
 }
 
@@ -57,7 +57,7 @@
 {
     if (! _allWords) {
         NSMutableSet *allWords = [NSMutableSet set];
-        
+
         for (NSString *lang in [NSBundle mainBundle].localizations) {
             [allWords addObjectsFromArray:[NSArray arrayWithContentsOfFile:[[NSBundle mainBundle]
              pathForResource:WORDS ofType:@"plist" inDirectory:nil forLocalization:lang]]];
@@ -65,7 +65,7 @@
 
         _allWords = allWords;
     }
-    
+
     return _allWords;
 }
 
@@ -156,35 +156,35 @@
     static dispatch_once_t onceToken = 0;
     NSMutableString *s = CFBridgingRelease(CFStringCreateMutableCopy(SecureAllocator(), 0,
                                                                      (CFStringRef)phrase));
-    
+
     dispatch_once(&onceToken, ^{
         NSMutableCharacterSet *set = [NSMutableCharacterSet letterCharacterSet];
-        
+
         ws = [NSCharacterSet whitespaceAndNewlineCharacterSet];
         [set formUnionWithCharacterSet:ws];
         invalid = set.invertedSet;
     });
-    
+
     while ([s rangeOfCharacterFromSet:invalid].location != NSNotFound) {
         [s deleteCharactersInRange:[s rangeOfCharacterFromSet:invalid]]; // remove invalid chars
     }
-    
+
     [s replaceOccurrencesOfString:@"\n" withString:@" " options:0 range:NSMakeRange(0, s.length)];
     while ([s replaceOccurrencesOfString:@"  " withString:@" " options:0 range:NSMakeRange(0, s.length)] > 0);
     while ([s rangeOfCharacterFromSet:ws].location == 0) [s deleteCharactersInRange:NSMakeRange(0, 1)]; // trim lead ws
     phrase = [self normalizePhrase:s];
-    
+
     if (! [self phraseIsValid:phrase]) {
         NSArray *a = CFBridgingRelease(CFStringCreateArrayBySeparatingStrings(SecureAllocator(),
                                                                               (CFStringRef)phrase, CFSTR(" ")));
-        
+
         for (NSString *word in a) { // add spaces between words for ideographic langauges
             if (word.length < 1 || [word characterAtIndex:0] < 0x3000 || [self wordIsValid:word]) continue;
-            
+
             for (NSUInteger i = 0; i < word.length; i++) {
                 for (NSUInteger j = (word.length - i > 8) ? 8 : word.length - i; j; j--) {
                     NSString *w  = [word substringWithRange:NSMakeRange(i, j)];
-                    
+
                     if (! [self wordIsValid:w]) continue;
                     [s replaceOccurrencesOfString:w withString:[NSString stringWithFormat:IDEO_SP @"%@" IDEO_SP, w]
                                           options:0 range:NSMakeRange(0, s.length)];
@@ -197,7 +197,7 @@
             }
         }
     }
-    
+
     return s;
 }
 
@@ -214,15 +214,15 @@
     CFStringLowercase((CFMutableStringRef)s, CFLocaleGetSystem());
     CFStringTrimWhitespace((CFMutableStringRef)s);
     [ws removeCharactersInString:@" "];
-    
+
     while (CFStringFindCharacterFromSet((CFStringRef)s, (CFCharacterSetRef)ws, CFRangeMake(0, s.length), 0, &r)) {
         [s replaceCharactersInRange:NSMakeRange(r.location, r.length) withString:@" "];
     }
-    
+
     while ([s rangeOfString:@"  "].location != NSNotFound) {
         [s replaceOccurrencesOfString:@"  " withString:@" " options:0 range:NSMakeRange(0, s.length)];
     }
-        
+
     return s;
 }
 
@@ -230,7 +230,7 @@
 - (NSData *)deriveKeyFromPhrase:(NSString *)phrase withPassphrase:(NSString *)passphrase
 {
     if (! phrase) return nil;
-    
+
     NSMutableData *key = [NSMutableData secureDataWithLength:sizeof(UInt512)];
     NSData *password, *salt;
     CFMutableStringRef pw = CFStringCreateMutableCopy(SecureAllocator(), 0, (CFStringRef)phrase);

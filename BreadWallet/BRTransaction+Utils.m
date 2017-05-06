@@ -4,7 +4,7 @@
 //
 //  Created by Henry on 10/27/15.
 //  Copyright (c) 2015 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@
     if (confirms == 0 && ! [manager.wallet transactionIsValid:self]) {
         return BRTransactionTypeInvalid;
     }
-    
+
     if (sent > 0 && received == sent) {
         return BRTransactionTypeMove;
     }
@@ -87,7 +87,7 @@
 {
     static uint32_t height = 0;
     uint32_t h = [BRPeerManager sharedInstance].lastBlockHeight;
-    
+
     if (h > height) height = h;
     return height;
 }
@@ -95,7 +95,7 @@
 - (NSString *)dateText
 {
     NSDateFormatter *df = [NSDateFormatter new];
-    
+
     df.dateFormat = dateFormat(@"Mdja");
 
     NSTimeInterval t = (self.timestamp > 1) ? self.timestamp :
@@ -121,7 +121,7 @@
 static NSString *dateFormat(NSString *template)
 {
     NSString *format = [NSDateFormatter dateFormatFromTemplate:template options:0 locale:[NSLocale currentLocale]];
-    
+
     format = [format stringByReplacingOccurrencesOfString:@", " withString:@" "];
     format = [format stringByReplacingOccurrencesOfString:@" a" withString:@"a"];
     format = [format stringByReplacingOccurrencesOfString:@"hh" withString:@"h"];

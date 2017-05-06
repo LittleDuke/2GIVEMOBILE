@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 10/22/15.
 //  Copyright (c) 2015 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -48,24 +48,24 @@
         self.type = TX_MDTYPE_MSG;
         self.txHash = [NSData dataWithBytes:tx.txHash.u8 length:sizeof(UInt256)];
     }];
-    
+
     return self;
 }
 
 - (BRTransaction *)transaction
 {
     __block BRTransaction *tx = nil;
-    
+
     [self.managedObjectContext performBlockAndWait:^{
         NSData *data = self.blob;
-    
+
         if (data.length > sizeof(uint32_t)*2) {
             tx = [BRTransaction transactionWithMessage:data];
             tx.blockHeight = [data UInt32AtOffset:data.length - sizeof(uint32_t)*2];
             tx.timestamp = [data UInt32AtOffset:data.length - sizeof(uint32_t)];
         }
     }];
-    
+
     return tx;
 }
 

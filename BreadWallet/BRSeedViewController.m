@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 6/12/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -93,52 +93,52 @@ int tapCount = 0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-    
+
     if (! [defs boolForKey:WALLET_NEEDS_BACKUP_KEY]) {
         self.continueButton.hidden = YES;
     } else if ([defs boolForKey:WALLET_NEEDS_BACKUP_KEY]) {
         self.continueButton.hidden = NO;
     }
     // Do any additional setup after loading the view.
-    
+
     self.tutorialView.hidden = YES;
-    
+
     self.continueButton.layer.cornerRadius = 2;
     self.continueButton.layer.borderWidth = 2;
     self.continueButton.layer.borderColor = (__bridge CGColorRef _Nullable)([UIColor colorWithRed:40.0 green:40.0 blue:40.0 alpha:0.90]);
     self.continueButton.clipsToBounds = YES;
-    
+
     if (self.navigationController.viewControllers.firstObject != self) {
         self.wallpaper.hidden = YES;
         self.view.backgroundColor = [UIColor clearColor];
     }
-    
+
     self.titleLabel.text = NSLocalizedString(@"Pay", nil);
     self.descriptionLabel.text = NSLocalizedString(@"Easily send Litecoin anywhere in the world with LoafWallet's live currency conversion rates, and QR scanner for quick on-the-go payments.", nil);
-    
+
     [self.progessButton addTarget:self action:@selector(tap) forControlEvents:UIControlEventTouchUpInside];
-    
+
     @autoreleasepool {  // @autoreleasepool ensures sensitive data will be dealocated immediately
         if (self.seedPhrase.length > 0 && [self.seedPhrase characterAtIndex:0] > 0x3000) { // ideographic language
             CGRect r;
             NSMutableString *s = CFBridgingRelease(CFStringCreateMutable(SecureAllocator(), 0)),
                             *l = CFBridgingRelease(CFStringCreateMutable(SecureAllocator(), 0));
-            
+
             for (NSString *w in CFBridgingRelease(CFStringCreateArrayBySeparatingStrings(SecureAllocator(),
                                                   (CFStringRef)self.seedPhrase, CFSTR(" ")))) {
                 if (l.length > 0) [l appendString:IDEO_SP];
                 [l appendString:w];
                 r = [l boundingRectWithSize:CGRectInfinite.size options:NSStringDrawingUsesLineFragmentOrigin
                      attributes:@{NSFontAttributeName:self.seedLabel.font} context:nil];
-                
+
                 if (r.size.width + LABEL_MARGIN*2.0 >= self.view.bounds.size.width) {
                     [s appendString:@"\n"];
                     l.string = w;
                 }
                 else if (s.length > 0) [s appendString:IDEO_SP];
-                
+
                 [s appendString:w];
             }
 
@@ -148,7 +148,7 @@ int tapCount = 0;
 
         self.seedPhrase = nil;
     }
-    
+
 #if DEBUG
     self.seedLabel.userInteractionEnabled = YES; // allow clipboard copy only for debug builds
 #endif
@@ -157,9 +157,9 @@ int tapCount = 0;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
- 
+
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-    
+
     [UIView animateWithDuration:0.1 animations:^{
         self.seedLabel.alpha = 1.0;
     }];
@@ -178,7 +178,7 @@ int tapCount = 0;
                 }
             }];
     }
-    
+
     //TODO: make it easy to create a new wallet and transfer balance
     if (! self.screenshotObserver) {
         self.screenshotObserver =
@@ -195,7 +195,7 @@ int tapCount = 0;
                     [self.navigationController.presentingViewController dismissViewControllerAnimated:NO
                      completion:nil];
                     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
-                    
+
                     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
                       message:NSLocalizedString(@"Screenshots are visible to other apps and devices. "
                                                 "Generate a new recovery phrase and keep it secret.", nil)
@@ -229,7 +229,7 @@ int tapCount = 0;
 -(void)tap
 {
     tapCount += 1;
-    
+
     if (tapCount == 1) {
 
         self.titleLabel.text = NSLocalizedString(@"Receive", nil);
@@ -240,22 +240,22 @@ int tapCount = 0;
         self.descriptionLabel.text = NSLocalizedString(@"Browse through your transaction history, secured with your passcode. This is not visible to others, unless they possess your LoafWallet passcode. Find indepth details about every transaction.", nil);
         [self.progessButton setTitle:@"→" forState:UIControlStateNormal];
     } else if (tapCount == 3) {
-        
+
         [BREventManager saveEvent:@"seed:toggle_write"];
         NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-        
+
         if ([defs boolForKey:WALLET_NEEDS_BACKUP_KEY]) {
             [defs removeObjectForKey:WALLET_NEEDS_BACKUP_KEY];
         }
         else {
             [defs setBool:YES forKey:WALLET_NEEDS_BACKUP_KEY];
         }
-        
+
         [defs synchronize];
-        
+
         [BREventManager saveEvent:@"seed:dismiss"];
         if (self.navigationController.viewControllers.firstObject != self) return;
-        
+
         self.navigationController.presentingViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         [self.navigationController.presentingViewController.presentingViewController dismissViewControllerAnimated:YES
                                                                                                         completion:nil];

@@ -4,7 +4,7 @@
 //
 //  Created by Aaron Voisine on 5/22/13.
 //  Copyright (c) 2013 Aaron Voisine <voisine@gmail.com>
-//  Copyright © 2016 Litecoin Association <loshan1212@gmail.com>
+//  Copyright © 2017 Litecoin Foundation <loshan1212@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ int BRSecp256k1PointGen(BRECPoint *p, const UInt256 *i)
 {
     secp256k1_pubkey pubkey;
     size_t pLen = sizeof(*p);
-    
+
     dispatch_once(&_ctx_once, ^{ _ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY); });
     return (secp256k1_ec_pubkey_create(_ctx, &pubkey, (const unsigned char *)i) &&
             secp256k1_ec_pubkey_serialize(_ctx, (unsigned char *)p, &pLen, &pubkey, SECP256K1_EC_COMPRESSED));
@@ -81,7 +81,7 @@ int BRSecp256k1PointAdd(BRECPoint *p, const UInt256 *i)
 {
     secp256k1_pubkey pubkey;
     size_t pLen = sizeof(*p);
-    
+
     dispatch_once(&_ctx_once, ^{ _ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY); });
     return (secp256k1_ec_pubkey_parse(_ctx, &pubkey, (const unsigned char *)p, sizeof(*p)) &&
             secp256k1_ec_pubkey_tweak_add(_ctx, &pubkey, (const unsigned char *)i) &&
@@ -94,7 +94,7 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
 {
     secp256k1_pubkey pubkey;
     size_t pLen = sizeof(*p);
-    
+
     dispatch_once(&_ctx_once, ^{ _ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY); });
     return (secp256k1_ec_pubkey_parse(_ctx, &pubkey, (const unsigned char *)p, sizeof(*p)) &&
             secp256k1_ec_pubkey_tweak_mul(_ctx, &pubkey, (const unsigned char *)i) &&
@@ -150,33 +150,33 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
 {
     if (privateKey.length == 0) return nil;
     if (! (self = [self init])) return nil;
-    
+
     // mini private key format
     if ((privateKey.length == 30 || privateKey.length == 22) && [privateKey characterAtIndex:0] == 'S') {
         if (! [privateKey isValidBitcoinPrivateKey]) return nil;
-        
+
         _seckey = [CFBridgingRelease(CFStringCreateExternalRepresentation(SecureAllocator(), (CFStringRef)privateKey,
                                                                           kCFStringEncodingUTF8, 0)) SHA256];
         _compressed = NO;
         return self;
     }
-    
+
     NSData *d = privateKey.base58checkToData;
     uint8_t version = BITCOIN_PRIVKEY;
-    
+
 #if BITCOIN_TESTNET
     version = BITCOIN_PRIVKEY_TEST;
 #endif
-    
+
     if (! d || d.length == 28) d = privateKey.base58ToData;
     if (d.length < sizeof(UInt256) || d.length > sizeof(UInt256) + 2) d = privateKey.hexToData;
-    
+
     if ((d.length == sizeof(UInt256) + 1 || d.length == sizeof(UInt256) + 2) && *(const uint8_t *)d.bytes == version) {
         _seckey = *(const UInt256 *)((const uint8_t *)d.bytes + 1);
         _compressed = (d.length == sizeof(UInt256) + 2) ? YES : NO;
     }
     else if (d.length == sizeof(UInt256)) _seckey = *(const UInt256 *)d.bytes;
-    
+
     return (secp256k1_ec_seckey_verify(_ctx, _seckey.u8)) ? self : nil;
 }
 
@@ -184,9 +184,9 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
 {
     if (publicKey.length != 33 && publicKey.length != 65) return nil;
     if (! (self = [self init])) return nil;
-    
+
     secp256k1_pubkey pk;
-    
+
     self.pubkey = publicKey;
     self.compressed = (self.pubkey.length == 33) ? YES : NO;
     return (secp256k1_ec_pubkey_parse(_ctx, &pk, self.publicKey.bytes, self.publicKey.length)) ? self : nil;
@@ -198,7 +198,7 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
     if (! (self = [self init])) return nil;
 
     self.compressed = (((uint8_t *)compactSig.bytes)[0] - 27 >= 4) ? YES : NO;
-    
+
     NSMutableData *pubkey = [NSMutableData dataWithLength:(self.compressed ? 33 : 65)];
     size_t len = pubkey.length;
     int recid = (((uint8_t *)compactSig.bytes)[0] - 27) % 4;
@@ -213,7 +213,7 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
         _pubkey = pubkey;
         return self;
     }
-    
+
     return nil;
 }
 
@@ -247,7 +247,7 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
             if (len == d.length) self.pubkey = d;
         }
     }
-    
+
     return self.pubkey;
 }
 
@@ -270,7 +270,7 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
 #if BITCOIN_TESTNET
     version = BITCOIN_PUBKEY_ADDRESS_TEST;
 #endif
-    
+
     [d appendBytes:&version length:1];
     [d appendBytes:&hash160 length:sizeof(hash160)];
     return [NSString base58checkWithData:d];
@@ -286,13 +286,13 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
     NSMutableData *sig = [NSMutableData dataWithLength:72];
     size_t len = sig.length;
     secp256k1_ecdsa_signature s;
-    
+
     if (secp256k1_ecdsa_sign(_ctx, &s, md.u8, _seckey.u8, secp256k1_nonce_function_rfc6979, NULL) &&
         secp256k1_ecdsa_signature_serialize_der(_ctx, sig.mutableBytes, &len, &s)) {
         sig.length = len;
     }
     else sig = nil;
-    
+
     return sig;
 }
 
@@ -301,13 +301,13 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
     secp256k1_pubkey pk;
     secp256k1_ecdsa_signature s;
     BOOL r = NO;
-    
+
     if (secp256k1_ec_pubkey_parse(_ctx, &pk, self.publicKey.bytes, self.publicKey.length) &&
         secp256k1_ecdsa_signature_parse_der(_ctx, &s, sig.bytes, sig.length) &&
         secp256k1_ecdsa_verify(_ctx, &s, md.u8, &pk) == 1) { // success is 1, all other values are fail
         r = YES;
     }
-    
+
     return r;
 }
 
@@ -319,17 +319,17 @@ int BRSecp256k1PointMul(BRECPoint *p, const UInt256 *i)
         NSLog(@"%s: can't sign with a public key", __func__);
         return nil;
     }
-    
+
     NSMutableData *sig = [NSMutableData dataWithLength:65];
     secp256k1_ecdsa_recoverable_signature s;
     int recid = 0;
-    
+
     if (secp256k1_ecdsa_sign_recoverable(_ctx, &s, md.u8, _seckey.u8, secp256k1_nonce_function_rfc6979, NULL) &&
         secp256k1_ecdsa_recoverable_signature_serialize_compact(_ctx, (uint8_t *)sig.mutableBytes + 1, &recid, &s)) {
         ((uint8_t *)sig.mutableBytes)[0] = 27 + recid + (self.compressed ? 4 : 0);
     }
     else sig = nil;
-    
+
     return sig;
 }
 
