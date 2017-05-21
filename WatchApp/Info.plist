@@ -28,7 +28,7 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>WKCompanionAppBundleIdentifier</key>
-	<string>com.litecoin.loafwallet</string>
+	<string>info.2give.wallet</string>
 	<key>WKWatchKitApp</key>
 	<true/>
 </dict>

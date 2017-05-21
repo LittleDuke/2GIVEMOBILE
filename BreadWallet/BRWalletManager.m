@@ -44,14 +44,14 @@
 #define CIRCLE  @"\xE2\x97\x8C" // dotted circle (utf-8)
 #define DOT     @"\xE2\x97\x8F" // black circle (utf-8)
 
-#define UNSPENT_URL          @"https://api.breadwallet.com/q/addrs/utxo"
-#define UNSPENT_FAILOVER_URL @"https://insight.bitpay.com/api/addrs/utxo"
-#define FEE_PER_KB_URL       @"https://api.breadwallet.com/fee-per-kb"
-#define TICKER_URL           @"https://www.loshan.co.uk/api/v1/info"
-#define TICKER_FAILOVER_URL  @"https://litecoin.com/api/v1/ticker"
+#define UNSPENT_URL          @"http://api.givecoin.io/v1/addrs/utxo"
+#define UNSPENT_FAILOVER_URL @"http://api.givecoin.io/v1/addrs/utxo"
+#define FEE_PER_KB_URL       @"http://api.givecoin.io/v1/fee-per-kb"
+#define TICKER_URL           @"http://api.givecoin.io/v1/ticker"
+#define TICKER_FAILOVER_URL  @"http://api.givecoin.io/v1/ticker"
 
 #define SEED_ENTROPY_LENGTH   (128/8)
-#define SEC_ATTR_SERVICE      @"com.litecoin.loafwallet"
+#define SEC_ATTR_SERVICE      @"info.2give.wallet"
 #define DEFAULT_CURRENCY_CODE @"USD"
 #define DEFAULT_SPENT_LIMIT   SATOSHIS
 
@@ -72,7 +72,7 @@
 #define PIN_FAIL_HEIGHT_KEY @"pinfailheight"
 #define AUTH_PRIVKEY_KEY    @"authprivkey"
 #define SEED_KEY            @"seed" // depreceated
-#define USER_ACCOUNT_KEY    @"https://api.breadwallet.com"
+#define USER_ACCOUNT_KEY    @"http://api.givecoin.io"
 
 static BOOL setKeychainData(NSData *data, NSString *key, BOOL authenticated)
 {
@@ -1016,7 +1016,7 @@ static NSDictionary *getKeychainDict(NSString *key, NSError **error)
 
 // MARK: - query unspent outputs
 
-// queries api.breadwallet.com and calls the completion block with unspent outputs for the given addresses
+// queries api.givecoin.io and calls the completion block with unspent outputs for the given addresses
 - (void)utxosForAddresses:(NSArray *)addresses
 completion:(void (^)(NSArray *utxos, NSArray *amounts, NSArray *scripts, NSError *error))completion
 {
@@ -1096,7 +1096,7 @@ completion:(void (^)(NSArray *utxos, NSArray *amounts, NSArray *scripts, NSError
     }] resume];
 }
 
-// given a private key, queries api.breadwallet.com for unspent outputs and calls the completion block with a signed transaction
+// given a private key, queries api.givecoin.io for unspent outputs and calls the completion block with a signed transaction
 // that will sweep the balance into the wallet (doesn't publish the tx)
 - (void)sweepPrivateKey:(NSString *)privKey withFee:(BOOL)fee
 completion:(void (^)(BRTransaction *tx, uint64_t fee, NSError *error))completion

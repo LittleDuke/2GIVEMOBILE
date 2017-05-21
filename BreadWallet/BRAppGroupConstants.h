@@ -24,6 +24,6 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#define APP_GROUP_ID                  @"group.com.litecoin.loafwallet"
+#define APP_GROUP_ID                  @"group.info.2give.wallet"
 #define APP_GROUP_REQUEST_DATA_KEY    @"kBRSharedContainerDataWalletRequestDataKey"
 #define APP_GROUP_RECEIVE_ADDRESS_KEY @"kBRSharedContainerDataWalletReceiveAddressKey"

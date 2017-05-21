@@ -6,7 +6,8 @@
 	<string>development</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.litecoin.loafwallet</string>
+		<string>group.info.2give.wallet</string>
+		<string>group.info.2give.wallet</string>
 	</array>
 </dict>
 </plist>

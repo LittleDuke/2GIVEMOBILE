@@ -81,7 +81,7 @@
     NSURL *url = [NSURL URLWithString:s];
 
     if (! url || ! url.scheme) {
-        url = [NSURL URLWithString:[NSString stringWithFormat:@"litecoin://%@", s]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"2GIVE://%@", s]];
     }
     else if (! url.host && url.resourceSpecifier) {
         url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", url.scheme, url.resourceSpecifier]];
@@ -126,7 +126,7 @@
 {
     if (! [self.scheme isEqual:@"litecoin"]) return self.r;
 
-    NSMutableString *s = [NSMutableString stringWithString:@"litecoin:"];
+    NSMutableString *s = [NSMutableString stringWithString:@"2GIVE:"];
     NSMutableArray *q = [NSMutableArray array];
     NSMutableCharacterSet *charset = [[NSCharacterSet URLQueryAllowedCharacterSet] mutableCopy];
 

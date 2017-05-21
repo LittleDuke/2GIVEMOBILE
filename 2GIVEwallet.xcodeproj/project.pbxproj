@@ -277,7 +277,7 @@
 		22FCD22B1C0E68C80066D798 /* BRTarTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BRTarTests.swift; sourceTree = "<group>"; };
 		22FF2C361BED381400B36384 /* breadwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "breadwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		22FF2C371BED381400B36384 /* BRAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BRAPIClient.swift; sourceTree = "<group>"; };
-		31D68B501C23B6C10030FAAA /* LoafWalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LoafWalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		31D68B501C23B6C10030FAAA /* 2GIVEwalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = 2GIVEwalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		31D68B521C23B6C10030FAAA /* BreadWalletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadWalletUITests.swift; sourceTree = "<group>"; };
 		31D68B541C23B6C10030FAAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		31D68B5A1C23B6FD0030FAAA /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
@@ -448,12 +448,12 @@
 		75D5F3BE191EC270004AB296 /* breadwallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = breadwallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		75D5F3C9191EC270004AB296 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		75D5F3CD191EC270004AB296 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		75D5F3CF191EC270004AB296 /* LoafWallet-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LoafWallet-Prefix.pch"; sourceTree = "<group>"; };
+		75D5F3CF191EC270004AB296 /* 2GIVEwallet-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "2GIVEwallet-Prefix.pch"; sourceTree = "<group>"; };
 		75D5F3D0191EC270004AB296 /* BRAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BRAppDelegate.h; sourceTree = "<group>"; };
 		75D5F3D1191EC270004AB296 /* BRAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BRAppDelegate.m; sourceTree = "<group>"; };
 		75D5F3DD191EC270004AB296 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		75D5F3DF191EC270004AB296 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		75D5F3E5191EC270004AB296 /* LoafWalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LoafWalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		75D5F3E5191EC270004AB296 /* 2GIVEwalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = 2GIVEwalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		75D5F3F2191EC270004AB296 /* BreadWalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BreadWalletTests.m; sourceTree = "<group>"; };
 		75DE023F1B0EB7990027FF08 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Main.strings; sourceTree = "<group>"; };
 		75DE02411B0EB79A0027FF08 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -858,9 +858,9 @@
 			isa = PBXGroup;
 			children = (
 				75D5F3BE191EC270004AB296 /* breadwallet.app */,
-				75D5F3E5191EC270004AB296 /* LoafWalletTests.xctest */,
+				75D5F3E5191EC270004AB296 /* 2GIVEwalletTests.xctest */,
 				BAE12BE51B2DEE7F00895CC5 /* TodayExtension.appex */,
-				31D68B501C23B6C10030FAAA /* LoafWalletTests.xctest */,
+				31D68B501C23B6C10030FAAA /* 2GIVEwalletTests.xctest */,
 				BA913BDE1BD57E4D005A7C0E /* WatchApp.app */,
 				BA913BEA1BD57E4D005A7C0E /* WatchApp Extension.appex */,
 			);
@@ -921,7 +921,7 @@
 				75D5F3C9191EC270004AB296 /* Info.plist */,
 				757E09971ADB8EEB006FD352 /* Localizable.strings */,
 				75D5F3CD191EC270004AB296 /* main.m */,
-				75D5F3CF191EC270004AB296 /* LoafWallet-Prefix.pch */,
+				75D5F3CF191EC270004AB296 /* 2GIVEwallet-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1043,9 +1043,9 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		31D68B4F1C23B6C10030FAAA /* LoafWalletUITests */ = {
+		31D68B4F1C23B6C10030FAAA /* 2GIVEwalletUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 31D68B591C23B6C10030FAAA /* Build configuration list for PBXNativeTarget "LoafWalletUITests" */;
+			buildConfigurationList = 31D68B591C23B6C10030FAAA /* Build configuration list for PBXNativeTarget "2GIVEwalletUITests" */;
 			buildPhases = (
 				31D68B4C1C23B6C10030FAAA /* Sources */,
 				31D68B4D1C23B6C10030FAAA /* Frameworks */,
@@ -1056,9 +1056,9 @@
 			dependencies = (
 				31D68B561C23B6C10030FAAA /* PBXTargetDependency */,
 			);
-			name = LoafWalletUITests;
+			name = 2GIVEwalletUITests;
 			productName = BreadWalletUITests;
-			productReference = 31D68B501C23B6C10030FAAA /* LoafWalletTests.xctest */;
+			productReference = 31D68B501C23B6C10030FAAA /* 2GIVEwalletTests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		75D5F3BD191EC270004AB296 /* breadwallet */ = {
@@ -1084,9 +1084,9 @@
 			productReference = 75D5F3BE191EC270004AB296 /* breadwallet.app */;
 			productType = "com.apple.product-type.application";
 		};
-		75D5F3E4191EC270004AB296 /* LoafWalletTests */ = {
+		75D5F3E4191EC270004AB296 /* 2GIVEwalletTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 75D5F3F9191EC270004AB296 /* Build configuration list for PBXNativeTarget "LoafWalletTests" */;
+			buildConfigurationList = 75D5F3F9191EC270004AB296 /* Build configuration list for PBXNativeTarget "2GIVEwalletTests" */;
 			buildPhases = (
 				75D5F3E1191EC270004AB296 /* Sources */,
 				75D5F3E2191EC270004AB296 /* Frameworks */,
@@ -1097,9 +1097,9 @@
 			dependencies = (
 				75D5F3EB191EC270004AB296 /* PBXTargetDependency */,
 			);
-			name = LoafWalletTests;
+			name = 2GIVEwalletTests;
 			productName = BreadWalletTests;
-			productReference = 75D5F3E5191EC270004AB296 /* LoafWalletTests.xctest */;
+			productReference = 75D5F3E5191EC270004AB296 /* 2GIVEwalletTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		BA913BDD1BD57E4D005A7C0E /* WatchApp */ = {
@@ -1214,7 +1214,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 75D5F3B9191EC270004AB296 /* Build configuration list for PBXProject "LoafWallet" */;
+			buildConfigurationList = 75D5F3B9191EC270004AB296 /* Build configuration list for PBXProject "2GIVEwallet" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1247,8 +1247,8 @@
 			targets = (
 				75D5F3BD191EC270004AB296 /* breadwallet */,
 				BAE12BE41B2DEE7F00895CC5 /* TodayExtension */,
-				75D5F3E4191EC270004AB296 /* LoafWalletTests */,
-				31D68B4F1C23B6C10030FAAA /* LoafWalletUITests */,
+				75D5F3E4191EC270004AB296 /* 2GIVEwalletTests */,
+				31D68B4F1C23B6C10030FAAA /* 2GIVEwalletUITests */,
 				75001D3D1A1EE89500585F55 /* submodules */,
 				BA913BDD1BD57E4D005A7C0E /* WatchApp */,
 				BA913BE91BD57E4D005A7C0E /* WatchApp Extension */,
@@ -1638,7 +1638,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.breadwallet.BreadWalletUITests;
-				PRODUCT_NAME = LoafWalletTests;
+				PRODUCT_NAME = 2GIVEwalletTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWalletUITests/BreadWalletUITests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -1656,7 +1656,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.breadwallet.BreadWalletUITests;
-				PRODUCT_NAME = LoafWalletTests;
+				PRODUCT_NAME = 2GIVEwalletTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWalletUITests/BreadWalletUITests-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = breadwallet;
@@ -1784,9 +1784,9 @@
 				CODE_SIGN_ENTITLEMENTS = breadwallet/breadwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = FAPFEJXE9S;
+				DEVELOPMENT_TEAM = DM7YEZAXG2;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "BreadWallet/LoafWallet-Prefix.pch";
+				GCC_PREFIX_HEADER = "BreadWallet/2GIVEwallet-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1797,7 +1797,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-DDebug";
-				PRODUCT_BUNDLE_IDENTIFIER = com.litecoin.loafwallet;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWallet/breadwallet-Bridging-Header.h";
@@ -1817,9 +1817,9 @@
 				CODE_SIGN_ENTITLEMENTS = breadwallet/breadwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = FAPFEJXE9S;
+				DEVELOPMENT_TEAM = DM7YEZAXG2;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "BreadWallet/LoafWallet-Prefix.pch";
+				GCC_PREFIX_HEADER = "BreadWallet/2GIVEwallet-Prefix.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1829,7 +1829,7 @@
 				INFOPLIST_FILE = BreadWallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.litecoin.loafwallet;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWallet/breadwallet-Bridging-Header.h";
@@ -1848,8 +1848,8 @@
 				GCC_WARN_PEDANTIC = NO;
 				INFOPLIST_FILE = BreadWalletTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.litecoin.loafwallet.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = LoafWalletTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "info.2give.wallet.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = 2GIVEwalletTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWalletTests/BreadWalletTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -1867,8 +1867,8 @@
 				GCC_WARN_PEDANTIC = NO;
 				INFOPLIST_FILE = BreadWalletTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.litecoin.loafwallet.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = LoafWalletTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "info.2give.wallet.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = 2GIVEwalletTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWalletTests/BreadWalletTests-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUNDLE_LOADER)";
@@ -1884,7 +1884,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = WatchApp/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = com.litecoin.loafwallet.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1904,7 +1904,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = WatchApp/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = com.litecoin.loafwallet.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1923,7 +1923,7 @@
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "WatchApp Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.litecoin.loafwallet.watchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = watchos;
@@ -1945,7 +1945,7 @@
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "WatchApp Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.litecoin.loafwallet.watchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = watchos;
@@ -1978,7 +1978,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.litecoin.loafwallet.TodayExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet.TodayExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -2005,7 +2005,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.litecoin.loafwallet.TodayExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet.TodayExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -2066,6 +2066,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = breadwallet/breadwallet.entitlements;
+				DEVELOPMENT_TEAM = DM7YEZAXG2;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BreadWallet/BreadWallet-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "TESTFLIGHT=1";
@@ -2079,7 +2080,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "-DTestflight";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.voisine.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWallet/breadwallet-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
@@ -2103,7 +2104,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.voisine.breadwallet.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "info.2give.wallet.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -2120,7 +2121,7 @@
 				GCC_WARN_PEDANTIC = NO;
 				INFOPLIST_FILE = BreadWalletTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.voisine.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = "info.2give.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWalletTests/BreadWalletTests-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
@@ -2160,7 +2161,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = WatchApp/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = org.voisine.breadwallet.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -2177,7 +2178,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				INFOPLIST_FILE = "WatchApp Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.voisine.breadwallet.watchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = info.2give.wallet.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -2191,7 +2192,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		31D68B591C23B6C10030FAAA /* Build configuration list for PBXNativeTarget "LoafWalletUITests" */ = {
+		31D68B591C23B6C10030FAAA /* Build configuration list for PBXNativeTarget "2GIVEwalletUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				31D68B571C23B6C10030FAAA /* Debug */,
@@ -2211,7 +2212,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		75D5F3B9191EC270004AB296 /* Build configuration list for PBXProject "LoafWallet" */ = {
+		75D5F3B9191EC270004AB296 /* Build configuration list for PBXProject "2GIVEwallet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				75D5F3F4191EC270004AB296 /* Debug */,
@@ -2231,7 +2232,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		75D5F3F9191EC270004AB296 /* Build configuration list for PBXNativeTarget "LoafWalletTests" */ = {
+		75D5F3F9191EC270004AB296 /* Build configuration list for PBXNativeTarget "2GIVEwalletTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				75D5F3FA191EC270004AB296 /* Debug */,
