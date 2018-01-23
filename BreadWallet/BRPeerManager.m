@@ -59,7 +59,7 @@ static const struct { uint32_t height; char *hash; uint32_t timestamp; uint32_t 
 };
 
 static const char *dns_seeds[] = {
-    "seed.givecoin.io", "seed2.givecoin.io"
+    "xtc.sinf.io"
 };
 
 #else // main net
@@ -71,7 +71,7 @@ static const struct { uint32_t height; char *hash; uint32_t timestamp; uint32_t 
 };
 
 static const char *dns_seeds[] = {
-    "seed.givecoin.io", "seed2.givecoin.io"
+    "xtc.sinf.io"
 };
 
 #endif
